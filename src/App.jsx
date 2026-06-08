@@ -12,19 +12,32 @@ import Settings from './pages/Settings/Settings'
 import ProductList from './pages/Products/List'
 import ProductCreate from './pages/Products/Create'
 import ProductEdit from './pages/Products/Edit'
+import ProtectedRoute from './components/common/ProtectedRoute'
+import { isAuthenticated } from './utils/auth'
 import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route
+          path="/"
+          element={
+            isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+          }
+        />
 
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
         </Route>
 
-        <Route element={<DashboardLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/products/create" element={<ProductCreate />} />
@@ -37,7 +50,10 @@ function App() {
           <Route path="/settings" element={<Settings />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route
+          path="*"
+          element={isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
+        />
       </Routes>
     </BrowserRouter>
   )
