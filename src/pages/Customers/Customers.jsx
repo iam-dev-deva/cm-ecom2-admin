@@ -1,9 +1,10 @@
-import React from 'react';
+import React from 'react'
 
 export default function Customers() {
   return (
     <div className="customers">
-      {/* Add customers content here */}
+      <h1>Customers</h1>
+      <p>Manage customer accounts and details.</p>
     </div>
-  );
+  )
 }

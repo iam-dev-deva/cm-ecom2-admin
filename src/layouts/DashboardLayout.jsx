@@ -1,10 +1,11 @@
-import React from 'react';
+import React from 'react'
+import { Outlet } from 'react-router-dom'
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout() {
   return (
     <div className="dashboard-layout">
       {/* Add dashboard layout components here */}
-      {children}
+      <Outlet />
     </div>
-  );
+  )
 }

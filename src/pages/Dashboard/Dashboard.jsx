@@ -1,9 +1,10 @@
-import React from 'react';
+import React from 'react'
 
 export default function Dashboard() {
   return (
     <div className="dashboard">
-      {/* Add dashboard content here */}
+      <h1>Dashboard</h1>
+      <p>Welcome to your admin dashboard.</p>
     </div>
-  );
+  )
 }

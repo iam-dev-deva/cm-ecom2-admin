@@ -1,9 +1,10 @@
-import React from 'react';
+import React from 'react'
 
 export default function Login() {
   return (
     <div className="login">
-      {/* Add login form here */}
+      <h1>Login</h1>
+      <p>Use your admin credentials to sign in.</p>
     </div>
-  );
+  )
 }
