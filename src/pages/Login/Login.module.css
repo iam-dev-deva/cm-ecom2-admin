@@ -1,0 +1,117 @@
+.login_page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* background-color: #f5f5f5; */
+    background: url('./../../assets/login_bg.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+.login_page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.login_form {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login_error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+/* password */
+.password_wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password_wrapper input {
+    width: 100%;
+    padding-right: 45px;
+}
+
+.password_toggle {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #666;
+}
+
+.password_toggle:hover {
+    color: #000;
+}
+
+/* form elements */
+.login_form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.input_group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.signup_link {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.input_group input {
+    width: 100%;
+    max-width: 365px;
+    padding: 12px 16px;
+    border: 1px solid #dfe3e8;
+    border-radius: 10px;
+    font-size: 14px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+.input_group input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+.login_button {
+    background-color: #3b82f6;
+    color: #fff;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.login_button:hover {
+    background-color: #2563eb;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+.checkbox_group{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

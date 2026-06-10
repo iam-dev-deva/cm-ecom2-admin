@@ -3,8 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { getStoredUser, logout } from '../../utils/auth'
 
 const activeStyle = {
-  fontWeight: 'bold',
-  textDecoration: 'underline',
+  
 }
 
 export default function Navbar() {
@@ -19,23 +18,23 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar-brand">
-        <span className="navbar-title">Circlemark Admin</span>
+        <span className="navbar-title">Ecom Admin</span>
         {user?.UserName && <span className="navbar-user">Welcome, {user.UserName}</span>}
       </div>
       <nav className="navbar-links">
-        <NavLink to="/dashboard" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+        <NavLink to="/dashboard"  className={({ isActive }) => (isActive ? "active" : "")}>
           Dashboard
         </NavLink>
-        <NavLink to="/products" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+        <NavLink to="/products"  className={({ isActive }) => (isActive ? "active" : "")}>
           Products
         </NavLink>
-        <NavLink to="/categories" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+        <NavLink to="/categories"  className={({ isActive }) => (isActive ? "active" : "")}>
           Categories
         </NavLink>
-        <NavLink to="/orders" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+        <NavLink to="/orders"  className={({ isActive }) => (isActive ? "active" : "")}>
           Orders
         </NavLink>
-        <NavLink to="/settings" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+        <NavLink to="/settings"  className={({ isActive }) => (isActive ? "active" : "")}>
           Settings
         </NavLink>
       </nav>
