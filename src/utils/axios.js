@@ -19,6 +19,8 @@ instance.interceptors.request.use(
         config.headers.Authorization = `Bearer ${user.token}`
       }
     } catch (e) {
+      console.log(e);
+      
       // ignore
     }
     return config
