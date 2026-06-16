@@ -50,28 +50,6 @@ export default function Navbar() {
           )}
         </div>
 
-        <nav className="navbar-links">
-          <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Dashboard
-          </NavLink>
-
-          <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Products
-          </NavLink>
-
-          <NavLink to="/categories" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Categories
-          </NavLink>
-
-          <NavLink to="/orders" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Orders
-          </NavLink>
-
-          {/* <NavLink to="/settings" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Settings
-        </NavLink> */}
-        </nav>
-
         <div className="profile-menu" ref={menuRef}>
           <FaUserCircle
             className="profile-icon"
