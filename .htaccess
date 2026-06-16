@@ -1,0 +1,1 @@
+<IfModule mod_rewrite.c>\n  RewriteEngine On\n  RewriteBase /\n\n  # Serve index.html for all non-file, non-directory requests\n  RewriteCond %{REQUEST_FILENAME} !-f\n  RewriteCond %{REQUEST_FILENAME} !-d\n  RewriteRule . /index.html [L]\n</IfModule>\n
