@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle, FaBars } from 'react-icons/fa';
 import { getStoredUser, logout } from '../../utils/auth';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
 
 
 
-export default function Navbar() {
+export default function Navbar({ onToggleSidebar }) {
   const navigate = useNavigate();
   const user = getStoredUser();
 
@@ -41,6 +41,10 @@ export default function Navbar() {
   return (
     <>
       <header className="navbar">
+        <button className="hamburger" aria-label="Toggle sidebar" onClick={() => onToggleSidebar && onToggleSidebar()}>
+          <FaBars />
+        </button>
+
         <div className="navbar-brand">
           <span className="navbar-title">Ecom Admin</span>
           {user?.UserName && (

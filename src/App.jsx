@@ -4,6 +4,8 @@ import DashboardLayout from './layouts/DashboardLayout'
 import Login from './pages/Login/Login'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Categories from './pages/Categories/Categories'
+import AddCategory from './pages/Categories/AddCategory'
+import EditCategory from './pages/Categories/EditCategory'
 import Customers from './pages/Customers/Customers'
 import Orders from './pages/Orders/Orders'
 import Coupons from './pages/Coupons/Coupons'
@@ -46,6 +48,8 @@ function App() {
             <Route path="/products/create" element={<ProductCreate />} />
             <Route path="/products/edit/:id" element={<ProductEdit />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/categories/add" element={<AddCategory />} />
+            <Route path="/categories/edit/:id" element={<EditCategory />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/coupons" element={<Coupons />} />
