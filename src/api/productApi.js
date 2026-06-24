@@ -1,6 +1,5 @@
-import axios from "axios";
+import axios from "../utils/axios.js";
 
-const STORAGE_KEY = 'cmAdminUser'
 const LOGIN_URL = 'https://rudra.circlemark.in/ProductServices/api'
 
 export async function addProductCategory(formData) {

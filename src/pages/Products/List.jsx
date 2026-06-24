@@ -1,10 +1,131 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { deleteProductCategory, getProductCategory } from '../../api/productApi'
 
 export default function ProductList() {
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [deleting, setDeleting] = useState(null)
+
+  async function loadCategories() {
+    try {
+      setLoading(true)
+      const data = await getProductCategory()
+      setCategories(Array.isArray(data) ? data : [])
+    } catch (err) {
+      toast.error(err.message || 'Unable to load categories')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadCategories()
+  }, [])
+
+  const handleDelete = async categoryId => {
+    const confirmed = window.confirm('Are you sure you want to delete this category?')
+    if (!confirmed) return
+
+    try {
+      setDeleting(categoryId)
+      await deleteProductCategory(categoryId)
+      setCategories(prev => prev.filter(item => String(item.CategoryId) !== String(categoryId)))
+      toast.success('Category deleted successfully')
+    } catch (err) {
+      toast.error(err.message || 'Unable to delete category')
+    } finally {
+      setDeleting(null)
+    }
+  }
+
+  const renderImageCell = image => {
+    if (!image) return '-'
+    if (typeof image === 'string' && image.startsWith('http')) {
+      return <img src={image} alt="category" className="table-image" />
+    }
+    return <span>{image}</span>
+  }
+
   return (
-    <div className="product-list">
-      <h1>Products</h1>
-      <p>View and manage the product catalog.</p>
+    <div className="category-page">
+      <div className="page-header">
+        <div>
+          {/* <h1>Categories</h1> */}
+          {/* <p>View and manage category records created through the product API.</p> */}
+        </div>
+        <Link to="/categories/add" className="btn btn-primary">
+          Add Category
+        </Link>
+      </div>
+
+      <div className="table-card">
+        <div className="table-status">
+          {loading ? 'Loading categories...' : `${categories.length} category records found`}
+        </div>
+
+        <div className="table-wrapper">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Menu Visible</th>
+                <th>Active</th>
+                <th>Category Image</th>
+                <th>Icon Image</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="9" className="empty-state">
+                    Loading...
+                  </td>
+                </tr>
+              ) : categories.length === 0 ? (
+                <tr>
+                  <td colSpan="9" className="empty-state">
+                    No categories available.
+                  </td>
+                </tr>
+              ) : (
+                categories.map((category, index) => (
+                  <tr key={`${category.CategoryId || index}-${category.CategoryCode || index}`}>
+                    <td>{category.CategoryName || '-'}</td>
+                    <td>{category.CategoryCode || '-'}</td>
+                    <td>{category.CategoryDescription || '-'}</td>
+                    <td>{category.MenuVisible ? 'Yes' : 'No'}</td>
+                    <td>{category.Active ? 'Yes' : 'No'}</td>
+                    <td>{renderImageCell(category.CategoryImage)}</td>
+                    <td>{renderImageCell(category.IconImage)}</td>
+                    <td>{category.CreatedAt ? new Date(category.CreatedAt).toLocaleString() : '-'}</td>
+                    <td>
+                      <div className="action-group">
+                        <Link to={`/categories/edit/${category.CategoryId || index}`} className="btn btn-secondary btn-small">
+                          Edit
+                        </Link>
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-small"
+                          onClick={() => handleDelete(category.CategoryId)}
+                          disabled={deleting === category.CategoryId}
+                        >
+                          {deleting === category.CategoryId ? 'Deleting...' : 'Delete'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   )
 }

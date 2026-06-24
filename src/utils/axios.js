@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { encryptToken } from './AuthToken.js'
 
 const STORAGE_KEY = 'cmAdminUser'
 
@@ -12,11 +13,11 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY)
+      const saved = sessionStorage.getItem(STORAGE_KEY)
       const user = saved ? JSON.parse(saved) : null
       if (user && user.token) {
         config.headers = config.headers || {}
-        config.headers.Authorization = `Bearer ${user.token}`
+        config.headers.JwtToken = encryptToken(user.token)
       }
     } catch (e) {
       console.log(e);
