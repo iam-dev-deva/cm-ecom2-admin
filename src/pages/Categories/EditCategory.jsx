@@ -107,28 +107,32 @@ export default function EditCategory() {
       return
     }
 
-    const payload = new FormData()
-    payload.append('Flag', 'U')
-    payload.append('CategoryId', String(category?.CategoryId || id))
-    payload.append('CompId', '1')
-    payload.append('BranchId', '5')
-    payload.append('CategoryName', form.CategoryName)
-    payload.append('CategoryCode', form.CategoryCode)
-    payload.append('CategoryDescription', form.CategoryDescription)
-    payload.append('MetaTitle', form.MetaTitle)
-    payload.append('MetaDescription', form.MetaDescription)
-    payload.append('MenuVisible', form.MenuVisible ? 'true' : 'false')
-    payload.append('Active', form.Active ? 'true' : 'false')
-    payload.append('CreatedBy', category?.CreatedBy || 'Admin')
-    payload.append('UpdatedBy', 'Manager')
-    payload.append('CreatedAt', category?.CreatedAt || new Date().toISOString())
-    payload.append('UpdatedAt', new Date().toISOString())
-
-    if (categoryImage) {
-      payload.append('CategoryImage', categoryImage)
+    const requestData = {
+      Flag: 'U',
+      CategoryId: category?.CategoryId || id,
+      CompId: 1,
+      BranchId: 5,
+      CategoryName: form.CategoryName,
+      CategoryCode: form.CategoryCode,
+      CategoryDescription: form.CategoryDescription,
+      CategoryImage: categoryImage?.name || category?.CategoryImage || '',
+      IconImage: iconImage?.name || category?.IconImage || '',
+      MetaTitle: form.MetaTitle,
+      MetaDescription: form.MetaDescription,
+      MenuVisible: form.MenuVisible,
+      Active: form.Active,
+      CreatedBy: category?.CreatedBy || 'Admin',
+      UpdatedBy: 'Manager',
+      CreatedAt: category?.CreatedAt || new Date().toISOString(),
+      UpdatedAt: new Date().toISOString(),
     }
-    if (iconImage) {
-      payload.append('IconImage', iconImage)
+
+    const payload = new FormData()
+    payload.append('FormData', JSON.stringify(requestData))
+
+    // Only append if new file is selected
+    if (categoryImage) {
+      payload.append('file', categoryImage)
     }
 
     try {
