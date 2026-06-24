@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { addProductCategory } from '../../api/productApi'
+import { addProductCategory, getNextCategoryCode } from '../../api/productApi'
 
 const initialForm = {
   CategoryName: '',
@@ -18,7 +18,58 @@ export default function AddCategory() {
   const [categoryImage, setCategoryImage] = useState(null)
   const [iconImage, setIconImage] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [codeLoading, setCodeLoading] = useState(true)
+  const [errors, setErrors] = useState({})
   const navigate = useNavigate()
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!form.CategoryName || form.CategoryName.trim() === '') {
+      newErrors.CategoryName = 'Category Name is required'
+    }
+
+    if (!form.CategoryCode || form.CategoryCode.trim() === '') {
+      newErrors.CategoryCode = 'Category Code is required'
+    }
+
+    if (!form.CategoryDescription || form.CategoryDescription.trim() === '') {
+      newErrors.CategoryDescription = 'Category Description is required'
+    }
+
+    if (!categoryImage) {
+      newErrors.CategoryImage = 'Category Image is required'
+    }
+
+    if (!iconImage) {
+      newErrors.IconImage = 'Icon Image is required'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  useEffect(() => {
+    const fetchNextCode = async () => {
+      try {
+        setCodeLoading(true)
+        const response = await getNextCategoryCode(1, 'PCTE')
+        const nextCode = response?.data[0]?.ItemValue || '';
+        
+        setForm(prev => ({
+          ...prev,
+          CategoryCode: nextCode,
+        }))
+      } catch (err) {
+        console.error('Failed to fetch next code:', err)
+        toast.error('Failed to load next category code')
+      } finally {
+        setCodeLoading(false)
+      }
+    }
+
+    fetchNextCode()
+  }, [])
 
   function handleChange(event) {
     const { name, value, type, checked } = event.target
@@ -40,46 +91,52 @@ export default function AddCategory() {
   }
 
   async function handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
 
-    if (!categoryImage || !iconImage) {
-      toast.error('Please select both category and icon images.')
+    if (!validateForm()) {
+      toast.error('Please fill in all required fields')
       return
     }
 
-    if (!form.CategoryName.trim() || !form.CategoryCode.trim()) {
-      toast.error('Category name and code are required.')
-      return
-    }
+    const requestData = {
+      Flag: "I",
+      CategoryId: 0,
+      CompId: 1,
+      BranchId: 5,
+      CategoryName: form.CategoryName,
+      CategoryCode: form.CategoryCode,
+      CategoryDescription: form.CategoryDescription,
+      CategoryImage: categoryImage?.name,
+      IconImage: iconImage?.name,
+      MetaTitle: form.MetaTitle,
+      MetaDescription: form.MetaDescription,
+      MenuVisible: form.MenuVisible,
+      Active: form.Active,
+      CreatedBy: "Admin",
+      UpdatedBy: "Manager",
+      CreatedAt: new Date().toISOString(),
+      UpdatedAt: new Date().toISOString(),
+    };
 
-    const payload = new FormData()
-    payload.append('Flag', 'I')
-    payload.append('CategoryId', '0')
-    payload.append('CompId', '1')
-    payload.append('BranchId', '5')
-    payload.append('CategoryName', form.CategoryName)
-    payload.append('CategoryCode', form.CategoryCode)
-    payload.append('CategoryDescription', form.CategoryDescription)
-    payload.append('MetaTitle', form.MetaTitle)
-    payload.append('MetaDescription', form.MetaDescription)
-    payload.append('MenuVisible', form.MenuVisible ? 'true' : 'false')
-    payload.append('Active', form.Active ? 'true' : 'false')
-    payload.append('CreatedBy', 'Admin')
-    payload.append('UpdatedBy', 'Manager')
-    payload.append('CreatedAt', new Date().toISOString())
-    payload.append('UpdatedAt', new Date().toISOString())
-    payload.append('CategoryImage', categoryImage)
-    payload.append('IconImage', iconImage)
+    const payload = new FormData();
+
+    // JSON part
+    payload.append("FormData", JSON.stringify(requestData));
+
+    // File part
+    payload.append("file", categoryImage);
 
     try {
-      setLoading(true)
-      await addProductCategory(payload)
-      toast.success('Category added successfully')
-      navigate('/categories')
+      setLoading(true);
+
+      const response = await addProductCategory(payload);
+
+      toast.success("Category added successfully");
+      navigate("/categories");
     } catch (err) {
-      toast.error(err.message || 'Unable to add category')
+      toast.error(err.message || "Unable to add category");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -96,7 +153,7 @@ export default function AddCategory() {
         <form className="category-form" onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="form-group">
-              <label htmlFor="CategoryName">Category Name</label>
+              <label htmlFor="CategoryName">Category Name <span className="required">*</span></label>
               <input
                 id="CategoryName"
                 name="CategoryName"
@@ -104,11 +161,13 @@ export default function AddCategory() {
                 value={form.CategoryName}
                 onChange={handleChange}
                 placeholder="Enter category name"
+                className={errors.CategoryName ? 'input-error' : ''}
               />
+              {errors.CategoryName && <span className="error-message">{errors.CategoryName}</span>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="CategoryCode">Category Code</label>
+              <label htmlFor="CategoryCode">Category Code <span className="required">*</span></label>
               <input
                 id="CategoryCode"
                 name="CategoryCode"
@@ -116,11 +175,16 @@ export default function AddCategory() {
                 value={form.CategoryCode}
                 onChange={handleChange}
                 placeholder="Enter category code"
+                readOnly
+                disabled={codeLoading}
+                className={errors.CategoryCode ? 'input-error' : ''}
               />
+              {codeLoading && <span className="file-meta">Loading code...</span>}
+              {errors.CategoryCode && <span className="error-message">{errors.CategoryCode}</span>}
             </div>
 
             <div className="form-group full-width">
-              <label htmlFor="CategoryDescription">Category Description</label>
+              <label htmlFor="CategoryDescription">Category Description <span className="required">*</span></label>
               <textarea
                 id="CategoryDescription"
                 name="CategoryDescription"
@@ -128,7 +192,9 @@ export default function AddCategory() {
                 value={form.CategoryDescription}
                 onChange={handleChange}
                 placeholder="Describe this category"
+                className={errors.CategoryDescription ? 'input-error' : ''}
               />
+              {errors.CategoryDescription && <span className="error-message">{errors.CategoryDescription}</span>}
             </div>
 
             <div className="form-group">
@@ -156,15 +222,17 @@ export default function AddCategory() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="CategoryImage">Category Image</label>
-              <input id="CategoryImage" name="CategoryImage" type="file" accept="image/*" onChange={handleFileChange} />
+              <label htmlFor="CategoryImage">Category Image <span className="required">*</span></label>
+              <input id="CategoryImage" name="CategoryImage" type="file" accept="image/*" onChange={handleFileChange} className={errors.CategoryImage ? 'input-error' : ''} />
               {categoryImage && <span className="file-meta">{categoryImage.name}</span>}
+              {errors.CategoryImage && <span className="error-message">{errors.CategoryImage}</span>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="IconImage">Icon Image</label>
-              <input id="IconImage" name="IconImage" type="file" accept="image/*" onChange={handleFileChange} />
+              <label htmlFor="IconImage">Icon Image <span className="required">*</span></label>
+              <input id="IconImage" name="IconImage" type="file" accept="image/*" onChange={handleFileChange} className={errors.IconImage ? 'input-error' : ''} />
               {iconImage && <span className="file-meta">{iconImage.name}</span>}
+              {errors.IconImage && <span className="error-message">{errors.IconImage}</span>}
             </div>
 
             <div className="switch-group">

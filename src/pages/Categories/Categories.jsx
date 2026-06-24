@@ -1,28 +1,21 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { deleteProductCategory, getProductCategory } from '../../api/productApi'
+import { deleteProductCategory } from '../../api/productApi'
+import { fetchCategories } from '../../redux/slices/categorySlice'
 
 export default function Categories() {
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
+  const { categories, loading, error } = useSelector(state => state.category)
   const [deleting, setDeleting] = useState(null)
 
-  async function loadCategories() {
-    try {
-      setLoading(true)
-      const data = await getProductCategory()
-      setCategories(Array.isArray(data) ? data : [])
-    } catch (err) {
-      toast.error(err.message || 'Unable to load categories')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    loadCategories()
-  }, [])
+    // Only fetch if categories are empty (lazy loading with caching)
+    if (categories.length === 0 && !loading) {
+      dispatch(fetchCategories())
+    }
+  }, [dispatch, categories.length, loading])
 
   const handleDelete = async categoryId => {
     const confirmed = window.confirm('Are you sure you want to delete this category?')
@@ -31,7 +24,8 @@ export default function Categories() {
     try {
       setDeleting(categoryId)
       await deleteProductCategory(categoryId)
-      setCategories(prev => prev.filter(item => String(item.CategoryId) !== String(categoryId)))
+      // Refresh categories after delete
+      dispatch(fetchCategories())
       toast.success('Category deleted successfully')
     } catch (err) {
       toast.error(err.message || 'Unable to delete category')
@@ -64,6 +58,7 @@ export default function Categories() {
         <div className="table-status">
           {loading ? 'Loading categories...' : `${categories.length} category records found`}
         </div>
+        {error && <div style={{ color: '#dc2626', padding: '12px', marginBottom: '12px' }}>Error: {error}</div>}
 
         <div className="table-wrapper">
           <table className="data-table">

@@ -612,3 +612,27 @@ a{
   color: #16a34a;
   margin-bottom: 10px;
 }
+
+.required {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.input-error {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2;
+}
+
+.input-error:focus {
+  outline: none;
+  border-color: #b91c1c !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-group .error-message {
+  display: block;
+  font-size: 13px;
+  margin-top: 6px;
+  margin-bottom: 0;
+}

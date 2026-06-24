@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { getProductCategory, updateProductCategory } from '../../api/productApi'
+import { updateProductCategory } from '../../api/productApi'
+import { fetchCategories } from '../../redux/slices/categorySlice'
 
 const initialForm = {
   CategoryName: '',
@@ -16,44 +18,68 @@ const initialForm = {
 export default function EditCategory() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { categories, loading: categoriesLoading } = useSelector(state => state.category)
+  
   const [category, setCategory] = useState(null)
   const [form, setForm] = useState(initialForm)
   const [categoryImage, setCategoryImage] = useState(null)
   const [iconImage, setIconImage] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [errors, setErrors] = useState({})
 
-  useEffect(() => {
-    async function loadCategory() {
-      try {
-        setLoading(true)
-        const data = await getProductCategory()
-        const list = Array.isArray(data) ? data : []
-        const found = list.find(item => String(item.CategoryId) === String(id))
-        if (!found) {
-          toast.error('Category not found.')
-          navigate('/categories')
-          return
-        }
-        setCategory(found)
-        setForm({
-          CategoryName: found.CategoryName || '',
-          CategoryCode: found.CategoryCode || '',
-          CategoryDescription: found.CategoryDescription || '',
-          MetaTitle: found.MetaTitle || '',
-          MetaDescription: found.MetaDescription || '',
-          MenuVisible: found.MenuVisible ?? true,
-          Active: found.Active ?? true,
-        })
-      } catch (err) {
-        toast.error(err.message || 'Unable to load category')
-      } finally {
-        setLoading(false)
-      }
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!form.CategoryName || form.CategoryName.trim() === '') {
+      newErrors.CategoryName = 'Category Name is required'
     }
 
-    loadCategory()
-  }, [id, navigate])
+    if (!form.CategoryCode || form.CategoryCode.trim() === '') {
+      newErrors.CategoryCode = 'Category Code is required'
+    }
+
+    if (!form.CategoryDescription || form.CategoryDescription.trim() === '') {
+      newErrors.CategoryDescription = 'Category Description is required'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  useEffect(() => {
+    // Load categories if not already loaded
+    if (categories.length === 0 && !categoriesLoading) {
+      dispatch(fetchCategories())
+    }
+  }, [dispatch, categories.length, categoriesLoading])
+
+  useEffect(() => {
+    // Find category once categories are loaded
+    if (categories.length > 0) {
+      const found = categories.find(item => String(item.CategoryId) === String(id))
+      if (!found) {
+        toast.error('Category not found.')
+        navigate('/categories')
+        return
+      }
+      setCategory(found)
+      setForm({
+        CategoryName: found.CategoryName || '',
+        CategoryCode: found.CategoryCode || '',
+        CategoryDescription: found.CategoryDescription || '',
+        MetaTitle: found.MetaTitle || '',
+        MetaDescription: found.MetaDescription || '',
+        MenuVisible: found.MenuVisible ?? true,
+        Active: found.Active ?? true,
+      })
+      setLoading(false)
+    } else if (!categoriesLoading && categories.length === 0) {
+      toast.error('No categories available.')
+      navigate('/categories')
+    }
+  }, [categories, id, navigate, categoriesLoading])
 
   function handleChange(event) {
     const { name, value, type, checked } = event.target
@@ -76,8 +102,8 @@ export default function EditCategory() {
   async function handleSubmit(event) {
     event.preventDefault()
 
-    if (!form.CategoryName.trim() || !form.CategoryCode.trim()) {
-      toast.error('Category name and code are required.')
+    if (!validateForm()) {
+      toast.error('Please fill in all required fields')
       return
     }
 
@@ -141,7 +167,7 @@ export default function EditCategory() {
         <form className="category-form" onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="form-group">
-              <label htmlFor="CategoryName">Category Name</label>
+              <label htmlFor="CategoryName">Category Name <span className="required">*</span></label>
               <input
                 id="CategoryName"
                 name="CategoryName"
@@ -149,11 +175,13 @@ export default function EditCategory() {
                 value={form.CategoryName}
                 onChange={handleChange}
                 placeholder="Enter category name"
+                className={errors.CategoryName ? 'input-error' : ''}
               />
+              {errors.CategoryName && <span className="error-message">{errors.CategoryName}</span>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="CategoryCode">Category Code</label>
+              <label htmlFor="CategoryCode">Category Code <span className="required">*</span></label>
               <input
                 id="CategoryCode"
                 name="CategoryCode"
@@ -161,11 +189,13 @@ export default function EditCategory() {
                 value={form.CategoryCode}
                 onChange={handleChange}
                 placeholder="Enter category code"
+                className={errors.CategoryCode ? 'input-error' : ''}
               />
+              {errors.CategoryCode && <span className="error-message">{errors.CategoryCode}</span>}
             </div>
 
             <div className="form-group full-width">
-              <label htmlFor="CategoryDescription">Category Description</label>
+              <label htmlFor="CategoryDescription">Category Description <span className="required">*</span></label>
               <textarea
                 id="CategoryDescription"
                 name="CategoryDescription"
@@ -173,7 +203,9 @@ export default function EditCategory() {
                 value={form.CategoryDescription}
                 onChange={handleChange}
                 placeholder="Describe this category"
+                className={errors.CategoryDescription ? 'input-error' : ''}
               />
+              {errors.CategoryDescription && <span className="error-message">{errors.CategoryDescription}</span>}
             </div>
 
             <div className="form-group">
