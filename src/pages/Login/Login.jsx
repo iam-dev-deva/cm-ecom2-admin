@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { isAuthenticated, loginUser, saveUser } from '../../utils/auth'
+import { getDecryptedStoredToken, isAuthenticated, loginUser, saveUser } from '../../utils/auth'
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from "./Login.module.css";
 
@@ -33,6 +33,8 @@ export default function Login() {
       if (response.success && response.data) {
         saveUser(response.data)
         navigate('/dashboard', { replace: true })
+        getDecryptedStoredToken()
+
       } else {
         setError(response.message || 'Login failed. Please verify your credentials.')
       }
