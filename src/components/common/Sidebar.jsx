@@ -7,7 +7,7 @@ export default function Sidebar({ isOpen, onClose }) {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
-        <span className="sidebar-title">Menu</span>
+        <span className="sidebar-title">ARUDRA</span>
         <button className="close-sidebar" onClick={() => onClose && onClose()} aria-label="Close sidebar">×</button>
       </div>
       <nav className="sidebar-links">
@@ -21,7 +21,7 @@ export default function Sidebar({ isOpen, onClose }) {
             onClick={() => setMainOpen((s) => !s)}
             aria-expanded={mainOpen}
           >
-            <span>Main</span>
+            <span>Master</span>
           </div>
           <div className={`submenu ${mainOpen ? 'open' : ''}`}>
             <NavLink to="/products" onClick={() => { setMainOpen(false); onClose && onClose() }} className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}>

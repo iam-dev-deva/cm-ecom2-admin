@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { deleteProductCategory } from '../../api/productApi'
 import { fetchCategories } from '../../redux/slices/categorySlice'
+import Pagination from '../../components/common/Pagination'
 
 export default function Categories() {
   const dispatch = useDispatch()
   const { categories, loading, error } = useSelector(state => state.category)
   const [deleting, setDeleting] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   useEffect(() => {
     // Only fetch if categories are empty (lazy loading with caching)
@@ -33,6 +36,25 @@ export default function Categories() {
       setDeleting(null)
     }
   }
+
+  const pageCount = Math.max(1, Math.ceil(categories.length / pageSize))
+  const currentCategories = categories.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
+  const handlePageChange = page => {
+    if (page < 1 || page > pageCount) return
+    setCurrentPage(page)
+  }
+
+  const handlePageSizeChange = event => {
+    setPageSize(Number(event.target.value))
+    setCurrentPage(1)
+  }
+
+  useEffect(() => {
+    if (currentPage > pageCount) {
+      setCurrentPage(pageCount)
+    }
+  }, [currentPage, pageCount])
 
   const renderImageCell = image => {
     if (!image) return '-'
@@ -90,7 +112,7 @@ export default function Categories() {
                   </td>
                 </tr>
               ) : (
-                categories.map((category, index) => (
+                currentCategories.map((category, index) => (
                   <tr key={`${category.CategoryId || index}-${category.CategoryCode || index}`}>
                     <td>{category.CategoryCode || '-'}</td>
                     <td>{category.CategoryName || '-'}</td>
@@ -122,6 +144,14 @@ export default function Categories() {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          totalItems={categories.length}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
       </div>
     </div>
   )

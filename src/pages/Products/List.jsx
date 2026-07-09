@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { deleteProduct, getProducts } from '../../api/productApi'
+import Pagination from '../../components/common/Pagination'
 
 export default function ProductList() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   async function loadProducts() {
     try {
@@ -40,12 +43,31 @@ export default function ProductList() {
     }
   }
 
+  const pageCount = Math.max(1, Math.ceil(products.length / pageSize))
+  const currentProducts = products.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
+  const handlePageChange = page => {
+    if (page < 1 || page > pageCount) return
+    setCurrentPage(page)
+  }
+
+  const handlePageSizeChange = event => {
+    setPageSize(Number(event.target.value))
+    setCurrentPage(1)
+  }
+
+  useEffect(() => {
+    if (currentPage > pageCount) {
+      setCurrentPage(pageCount)
+    }
+  }, [currentPage, pageCount])
+
   return (
     <div className="product-page">
       <div className="page-header">
         <div>
-          <h1>Products</h1>
-          <p>View and manage your product catalog.</p>
+          {/* <h1>Products</h1>
+          <p>View and manage your product catalog.</p> */}
         </div>
         <Link to="/products/create" className="btn btn-primary">
           Add Product
@@ -86,7 +108,7 @@ export default function ProductList() {
                   </td>
                 </tr>
               ) : (
-                products.map((product, index) => (
+                currentProducts.map((product, index) => (
                   <tr key={`${product.ProductID || product.ProductCode || index}`}>
                     <td>{product.ProductCode != null ? product.ProductCode : '-'}</td>
                     <td>{product.ItemName || '-'}</td>
@@ -117,6 +139,14 @@ export default function ProductList() {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          totalItems={products.length}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
       </div>
     </div>
   )

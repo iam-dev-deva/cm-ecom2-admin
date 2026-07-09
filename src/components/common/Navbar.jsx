@@ -46,10 +46,10 @@ export default function Navbar({ onToggleSidebar }) {
         </button>
 
         <div className="navbar-brand">
-          <span className="navbar-title">Ecom Admin</span>
+          <span className="navbar-title">ARUDRA Admin</span>
           {user?.UserName && (
             <span className="navbar-user">
-              Welcome, {user.UserName}
+              Welcome to ARUDRA Admin Panel
             </span>
           )}
         </div>
