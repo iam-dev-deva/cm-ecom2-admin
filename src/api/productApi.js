@@ -1,5 +1,6 @@
 import { getDecryptedStoredToken } from "../utils/auth.js";
 import axios from "../utils/axiosProduct.js";
+import axiosAdmin from "../utils/axiosAdmin.js";
 
 export async function addProductCategory(formData) {
   try {
@@ -71,9 +72,8 @@ export async function getProductCategory() {
 
 export async function getNextCategoryCode(compId = 1, codeTableId = 'PCTE') {
   try {
-    const COMMON_API_URL = 'https://rudra.circlemark.in'
-    const response = await axios.get(
-      `${COMMON_API_URL}/Common/Getcommoncodemaster?compId=${compId}&codeTableId=${codeTableId}&flag=NextCode`
+    const response = await axiosAdmin.get(
+      `/Common/Getcommoncodemaster?compId=${compId}&codeTableId=${codeTableId}&flag=NextCode`
     );
     return response.data;
   } catch (err) {
@@ -161,11 +161,10 @@ export async function getProductByCode(productCode) {
   }
 }
 
-export async function getNextProductCode(compId = 1, codeTableId = 'PRDE') {
+export async function getNextProductCode(compId = 1, codeTableId = 'PRTE') {
   try {
-    const COMMON_API_URL = 'https://rudra.circlemark.in'
-    const response = await axios.get(
-      `${COMMON_API_URL}/Common/Getcommoncodemaster?compId=${compId}&codeTableId=${codeTableId}&flag=NextCode`
+    // const COMMON_API_URL = 'https://rudra.circlemark.in'
+    const response = await axiosAdmin.get(`/Common/Getcommoncodemaster?compId=${compId}&codeTableId=${codeTableId}&flag=NextCode`
     );
     return response.data;
   } catch (err) {
@@ -174,6 +173,24 @@ export async function getNextProductCode(compId = 1, codeTableId = 'PRDE') {
       throw new Error(`${message}` || 'Failed to fetch next product code.');
     }
     throw err;
+  }
+}
+
+export async function validateProductToken(compId = 1, codeTableId = 'PRTE') {
+  try {
+    return await getNextProductCode(compId, codeTableId)
+  } catch (err) {
+    if (err?.response?.status === 401) {
+      try {
+        sessionStorage.removeItem('cmAdminUser')
+      } catch (e) {
+        // ignore
+      }
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
+      }
+    }
+    throw err
   }
 }
 

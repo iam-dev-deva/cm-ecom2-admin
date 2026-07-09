@@ -64,14 +64,15 @@ export default function Categories() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Name</th>
                 <th>Code</th>
-                <th>Description</th>
+                <th>Name</th>
+                {/* <th>Description</th> */}
                 <th>Menu Visible</th>
                 <th>Active</th>
-                <th>Category Image</th>
-                <th>Icon Image</th>
+                {/* <th>Category Image</th>
+                <th>Icon Image</th> */}
                 <th>Created At</th>
+                <th>Created By</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -91,14 +92,15 @@ export default function Categories() {
               ) : (
                 categories.map((category, index) => (
                   <tr key={`${category.CategoryId || index}-${category.CategoryCode || index}`}>
-                    <td>{category.CategoryName || '-'}</td>
                     <td>{category.CategoryCode || '-'}</td>
-                    <td>{category.CategoryDescription || '-'}</td>
+                    <td>{category.CategoryName || '-'}</td>
+                    {/* <td>{category.CategoryDescription || '-'}</td> */}
                     <td>{category.MenuVisible ? 'Yes' : 'No'}</td>
                     <td>{category.Active ? 'Yes' : 'No'}</td>
-                    <td>{renderImageCell(category.CategoryImage)}</td>
-                    <td>{renderImageCell(category.IconImage)}</td>
+                    {/* <td>{renderImageCell(category.CategoryImage)}</td>
+                    <td>{renderImageCell(category.IconImage)}</td> */}
                     <td>{category.CreatedAt ? new Date(category.CreatedAt).toLocaleString() : '-'}</td>
+                    <td>{category.CreatedBy || '-'}</td>
                     <td>
                       <div className="action-group">
                         <Link to={`/categories/edit/${category.CategoryId || index}`} className="btn btn-secondary btn-small">

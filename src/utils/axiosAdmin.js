@@ -4,7 +4,9 @@ import AuthToken from './AuthToken.js'
 const STORAGE_KEY = 'cmAdminUser'
 
 const instance = axios.create({
-  baseURL: "https://rudra.circlemark.in"+"/AdminServices/api",
+  // baseURL: "https://rudra.circlemark.in"+"/ProductServices/api",
+    baseURL: "https://rudra.circlemark.in"+"/AdminServices/api",
+
   headers: {
     'Content-Type': 'application/json',
   },
@@ -18,16 +20,18 @@ instance.interceptors.request.use(
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY)
       const user = saved ? JSON.parse(saved) : null
-      if (user && user.token) {
+      if (user && (user.token || user.JWTToken)) {
         config.headers = config.headers || {}
 
         // Always log the stored user for diagnosis
         console.log('Saved user object (request):', user)
 
+        const tokenValue = user.token || user.JWTToken
+         config.headers["USERID"] = "1";
         if (USE_PLAIN_TOKEN) {
-           config.headers["JwtToken"]  = user?.JWTToken
+          config.headers["JwtToken"] = tokenValue
         } else {
-           config.headers["JwtToken"]  = AuthToken.encryptToken(user?.JWTToken)
+          config.headers["JwtToken"] = AuthToken.encryptToken(tokenValue)
         }
       }
     } catch (e) {
@@ -73,6 +77,10 @@ instance.interceptors.response.use(
         sessionStorage.removeItem(STORAGE_KEY)
       } catch (e) {
         // ignore
+      }
+
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
       }
     }
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AuthLayout from './layouts/AuthLayout'
 import DashboardLayout from './layouts/DashboardLayout'
@@ -16,11 +17,20 @@ import ProductCreate from './pages/Products/Create'
 import ProductEdit from './pages/Products/Edit'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import { isAuthenticated } from './utils/auth'
+import { validateProductToken } from './api/productApi'
 import './App.css'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
+  useEffect(() => {
+    if (isAuthenticated()) {
+      validateProductToken().catch((err) => {
+        console.warn('Token validation failed', err)
+      })
+    }
+  }, [])
+
   return (
     <>
       <BrowserRouter>

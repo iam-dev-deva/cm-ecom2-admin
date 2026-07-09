@@ -51,6 +51,8 @@ export default function ProductEdit() {
   const [backImage, setBackImage] = useState(null)
   const [rightImage, setRightImage] = useState(null)
   const [leftImage, setLeftImage] = useState(null)
+  const [previewUrls, setPreviewUrls] = useState({ front: '', back: '', right: '', left: '' })
+  const [activeTab, setActiveTab] = useState('details')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState({})
@@ -147,6 +149,22 @@ export default function ProductEdit() {
     if (name === 'rightImage') setRightImage(file)
     if (name === 'leftImage') setLeftImage(file)
   }
+
+  useEffect(() => {
+    const urls = {
+      front: frontImage ? URL.createObjectURL(frontImage) : '',
+      back: backImage ? URL.createObjectURL(backImage) : '',
+      right: rightImage ? URL.createObjectURL(rightImage) : '',
+      left: leftImage ? URL.createObjectURL(leftImage) : '',
+    }
+    setPreviewUrls(urls)
+
+    return () => {
+      Object.values(urls).forEach(url => {
+        if (url) URL.revokeObjectURL(url)
+      })
+    }
+  }, [frontImage, backImage, rightImage, leftImage])
 
   const handleCategoryChange = event => {
     const selectedCode = event.target.value
@@ -252,213 +270,255 @@ export default function ProductEdit() {
 
       <div className="product-form-card">
         <form className="product-form" onSubmit={handleSubmit}>
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="productCode">Product Code</label>
-              <input id="productCode" name="productCode" type="text" value={form.productCode} readOnly />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="productCategory">Product Category</label>
-              <select
-                id="productCategory"
-                name="productCategory"
-                value={form.productCategory}
-                onChange={handleCategoryChange}
-              >
-                <option value="">Select category</option>
-                {categories.map(category => (
-                  <option key={category.CategoryId} value={category.CategoryCode}>
-                    {category.CategoryName} ({category.CategoryCode})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="itemName">Item Name</label>
-              <input id="itemName" name="itemName" type="text" value={form.itemName} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="brandName">Brand Name</label>
-              <input id="brandName" name="brandName" type="text" value={form.brandName} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="modelName">Model Name</label>
-              <input id="modelName" name="modelName" type="text" value={form.modelName} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="modelNo">Model No</label>
-              <input id="modelNo" name="modelNo" type="text" value={form.modelNo} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="skuNo">SKU No</label>
-              <input id="skuNo" name="skuNo" type="text" value={form.skuNo} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="manufacturer">Manufacturer</label>
-              <input id="manufacturer" name="manufacturer" type="text" value={form.manufacturer} onChange={handleChange} />
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="productDescription">Product Description</label>
-              <textarea id="productDescription" name="productDescription" rows="3" value={form.productDescription} onChange={handleChange} />
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="bulletPoint">Bullet Point</label>
-              <textarea id="bulletPoint" name="bulletPoint" rows="3" value={form.bulletPoint} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="material">Material</label>
-              <input id="material" name="material" type="text" value={form.material} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="color">Color</label>
-              <input id="color" name="color" type="text" value={form.color} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="size">Size</label>
-              <input id="size" name="size" type="text" value={form.size} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="hsnCode">HSN Code</label>
-              <input id="hsnCode" name="hsnCode" type="text" value={form.hsnCode} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="productTaxCode">Product Tax Code</label>
-              <input id="productTaxCode" name="productTaxCode" type="text" value={form.productTaxCode} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="countryOfOrigin">Country of Origin</label>
-              <input id="countryOfOrigin" name="countryOfOrigin" type="text" value={form.countryOfOrigin} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="yourPrice">Your Price</label>
-              <input id="yourPrice" name="yourPrice" type="number" step="0.01" value={form.yourPrice} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="maximumRetailPrice">Maximum Retail Price</label>
-              <input id="maximumRetailPrice" name="maximumRetailPrice" type="number" step="0.01" value={form.maximumRetailPrice} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="offeringSalePrice">Offering Sale Price</label>
-              <input id="offeringSalePrice" name="offeringSalePrice" type="number" step="0.01" value={form.offeringSalePrice} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="offeringSaleStartDate">Sale Start Date</label>
-              <input id="offeringSaleStartDate" name="offeringSaleStartDate" type="datetime-local" value={form.offeringSaleStartDate} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="offeringSaleEndDate">Sale End Date</label>
-              <input id="offeringSaleEndDate" name="offeringSaleEndDate" type="datetime-local" value={form.offeringSaleEndDate} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="itemLength">Item Length</label>
-              <input id="itemLength" name="itemLength" type="number" step="0.01" value={form.itemLength} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="itemWidth">Item Width</label>
-              <input id="itemWidth" name="itemWidth" type="number" step="0.01" value={form.itemWidth} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="itemHeight">Item Height</label>
-              <input id="itemHeight" name="itemHeight" type="number" step="0.01" value={form.itemHeight} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="itemSizeUnit">Item Size Unit</label>
-              <input id="itemSizeUnit" name="itemSizeUnit" type="text" value={form.itemSizeUnit} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="itemWeight">Item Weight</label>
-              <input id="itemWeight" name="itemWeight" type="number" step="0.01" value={form.itemWeight} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="itemWeightUnit">Item Weight Unit</label>
-              <input id="itemWeightUnit" name="itemWeightUnit" type="text" value={form.itemWeightUnit} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="packageLength">Package Length</label>
-              <input id="packageLength" name="packageLength" type="number" step="0.01" value={form.packageLength} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="packageWidth">Package Width</label>
-              <input id="packageWidth" name="packageWidth" type="number" step="0.01" value={form.packageWidth} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="packageHeight">Package Height</label>
-              <input id="packageHeight" name="packageHeight" type="number" step="0.01" value={form.packageHeight} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="packageUnit">Package Unit</label>
-              <input id="packageUnit" name="packageUnit" type="text" value={form.packageUnit} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="packageWeight">Package Weight</label>
-              <input id="packageWeight" name="packageWeight" type="number" step="0.01" value={form.packageWeight} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="packageWeightUnit">Package Weight Unit</label>
-              <input id="packageWeightUnit" name="packageWeightUnit" type="text" value={form.packageWeightUnit} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="frontImage">Front Image</label>
-              <input id="frontImage" name="frontImage" type="file" accept="image/*" onChange={handleFileChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="backImage">Back Image</label>
-              <input id="backImage" name="backImage" type="file" accept="image/*" onChange={handleFileChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="rightImage">Right Image</label>
-              <input id="rightImage" name="rightImage" type="file" accept="image/*" onChange={handleFileChange} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="leftImage">Left Image</label>
-              <input id="leftImage" name="leftImage" type="file" accept="image/*" onChange={handleFileChange} />
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="button" className="btn btn-secondary" onClick={() => navigate('/products')}>
-              Cancel
+          <div className="form-tabs">
+            <button type="button" className={`tab-button ${activeTab === 'details' ? 'active' : ''}`} onClick={() => setActiveTab('details')}>
+              Product Details
             </button>
-            <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? 'Saving...' : 'Update Product'}
+            <button type="button" className={`tab-button ${activeTab === 'images' ? 'active' : ''}`} onClick={() => setActiveTab('images')}>
+              Images
             </button>
           </div>
+
+          {activeTab === 'details' && (
+            <div className="form-grid">
+              <div className="form-group">
+                <label htmlFor="productCode">Product Code</label>
+                <input id="productCode" name="productCode" type="text" value={form.productCode} readOnly />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="productCategory">Product Category</label>
+                <select
+                  id="productCategory"
+                  name="productCategory"
+                  value={form.productCategory}
+                  onChange={handleCategoryChange}
+                >
+                  <option value="">Select category</option>
+                  {categories.map(category => (
+                    <option key={category.CategoryId} value={category.CategoryCode}>
+                      {category.CategoryName} ({category.CategoryCode})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itemName">Item Name</label>
+                <input id="itemName" name="itemName" type="text" value={form.itemName} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="brandName">Brand Name</label>
+                <input id="brandName" name="brandName" type="text" value={form.brandName} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="modelName">Model Name</label>
+                <input id="modelName" name="modelName" type="text" value={form.modelName} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="modelNo">Model No</label>
+                <input id="modelNo" name="modelNo" type="text" value={form.modelNo} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="skuNo">SKU No</label>
+                <input id="skuNo" name="skuNo" type="text" value={form.skuNo} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="manufacturer">Manufacturer</label>
+                <input id="manufacturer" name="manufacturer" type="text" value={form.manufacturer} onChange={handleChange} />
+              </div>
+
+              <div className="form-group full-width">
+                <label htmlFor="productDescription">Product Description</label>
+                <textarea id="productDescription" name="productDescription" rows="3" value={form.productDescription} onChange={handleChange} />
+              </div>
+
+              <div className="form-group full-width">
+                <label htmlFor="bulletPoint">Bullet Point</label>
+                <textarea id="bulletPoint" name="bulletPoint" rows="3" value={form.bulletPoint} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="material">Material</label>
+                <input id="material" name="material" type="text" value={form.material} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="color">Color</label>
+                <input id="color" name="color" type="text" value={form.color} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="size">Size</label>
+                <input id="size" name="size" type="text" value={form.size} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="hsnCode">HSN Code</label>
+                <input id="hsnCode" name="hsnCode" type="text" value={form.hsnCode} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="productTaxCode">Product Tax Code</label>
+                <input id="productTaxCode" name="productTaxCode" type="text" value={form.productTaxCode} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="countryOfOrigin">Country of Origin</label>
+                <input id="countryOfOrigin" name="countryOfOrigin" type="text" value={form.countryOfOrigin} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="yourPrice">Your Price</label>
+                <input id="yourPrice" name="yourPrice" type="number" step="0.01" value={form.yourPrice} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="maximumRetailPrice">Maximum Retail Price</label>
+                <input id="maximumRetailPrice" name="maximumRetailPrice" type="number" step="0.01" value={form.maximumRetailPrice} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="offeringSalePrice">Offering Sale Price</label>
+                <input id="offeringSalePrice" name="offeringSalePrice" type="number" step="0.01" value={form.offeringSalePrice} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="offeringSaleStartDate">Sale Start Date</label>
+                <input id="offeringSaleStartDate" name="offeringSaleStartDate" type="datetime-local" value={form.offeringSaleStartDate} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="offeringSaleEndDate">Sale End Date</label>
+                <input id="offeringSaleEndDate" name="offeringSaleEndDate" type="datetime-local" value={form.offeringSaleEndDate} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itemLength">Item Length</label>
+                <input id="itemLength" name="itemLength" type="number" step="0.01" value={form.itemLength} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itemWidth">Item Width</label>
+                <input id="itemWidth" name="itemWidth" type="number" step="0.01" value={form.itemWidth} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itemHeight">Item Height</label>
+                <input id="itemHeight" name="itemHeight" type="number" step="0.01" value={form.itemHeight} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itemSizeUnit">Item Size Unit</label>
+                <input id="itemSizeUnit" name="itemSizeUnit" type="text" value={form.itemSizeUnit} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itemWeight">Item Weight</label>
+                <input id="itemWeight" name="itemWeight" type="number" step="0.01" value={form.itemWeight} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="itemWeightUnit">Item Weight Unit</label>
+                <input id="itemWeightUnit" name="itemWeightUnit" type="text" value={form.itemWeightUnit} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="packageLength">Package Length</label>
+                <input id="packageLength" name="packageLength" type="number" step="0.01" value={form.packageLength} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="packageWidth">Package Width</label>
+                <input id="packageWidth" name="packageWidth" type="number" step="0.01" value={form.packageWidth} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="packageHeight">Package Height</label>
+                <input id="packageHeight" name="packageHeight" type="number" step="0.01" value={form.packageHeight} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="packageUnit">Package Unit</label>
+                <input id="packageUnit" name="packageUnit" type="text" value={form.packageUnit} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="packageWeight">Package Weight</label>
+                <input id="packageWeight" name="packageWeight" type="number" step="0.01" value={form.packageWeight} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="packageWeightUnit">Package Weight Unit</label>
+                <input id="packageWeightUnit" name="packageWeightUnit" type="text" value={form.packageWeightUnit} onChange={handleChange} />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'images' && (
+            <>
+              <div className="form-grid">
+                <div className="form-group image-upload-group">
+                  <label htmlFor="frontImage">Front Image</label>
+                  <input id="frontImage" name="frontImage" type="file" accept="image/*" onChange={handleFileChange} />
+                  {previewUrls.front && (
+                    <div className="image-preview-card">
+                      <img src={previewUrls.front} alt="Front preview" />
+                      <span className="preview-label">Front image selected</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-group image-upload-group">
+                  <label htmlFor="backImage">Back Image</label>
+                  <input id="backImage" name="backImage" type="file" accept="image/*" onChange={handleFileChange} />
+                  {previewUrls.back && (
+                    <div className="image-preview-card">
+                      <img src={previewUrls.back} alt="Back preview" />
+                      <span className="preview-label">Back image selected</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-group image-upload-group">
+                  <label htmlFor="rightImage">Right Image</label>
+                  <input id="rightImage" name="rightImage" type="file" accept="image/*" onChange={handleFileChange} />
+                  {previewUrls.right && (
+                    <div className="image-preview-card">
+                      <img src={previewUrls.right} alt="Right preview" />
+                      <span className="preview-label">Right image selected</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-group image-upload-group">
+                  <label htmlFor="leftImage">Left Image</label>
+                  <input id="leftImage" name="leftImage" type="file" accept="image/*" onChange={handleFileChange} />
+                  {previewUrls.left && (
+                    <div className="image-preview-card">
+                      <img src={previewUrls.left} alt="Left preview" />
+                      <span className="preview-label">Left image selected</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => navigate('/products')}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>
+                  {saving ? 'Saving...' : 'Update Product'}
+                </button>
+              </div>
+            </>
+          )
+          }
         </form>
       </div>
     </div>

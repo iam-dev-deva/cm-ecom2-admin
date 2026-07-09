@@ -25,6 +25,7 @@ instance.interceptors.request.use(
         console.log('Saved user object (request):', user)
 
         const tokenValue = user.token || user.JWTToken
+         config.headers["USERID"] = "1";
         if (USE_PLAIN_TOKEN) {
           config.headers["JwtToken"] = tokenValue
         } else {
@@ -74,6 +75,10 @@ instance.interceptors.response.use(
         sessionStorage.removeItem(STORAGE_KEY)
       } catch (e) {
         // ignore
+      }
+
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
       }
     }
 

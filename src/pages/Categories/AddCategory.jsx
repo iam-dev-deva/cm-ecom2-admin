@@ -153,20 +153,6 @@ export default function AddCategory() {
         <form className="category-form" onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="form-group">
-              <label htmlFor="CategoryName">Category Name <span className="required">*</span></label>
-              <input
-                id="CategoryName"
-                name="CategoryName"
-                type="text"
-                value={form.CategoryName}
-                onChange={handleChange}
-                placeholder="Enter category name"
-                className={errors.CategoryName ? 'input-error' : ''}
-              />
-              {errors.CategoryName && <span className="error-message">{errors.CategoryName}</span>}
-            </div>
-
-            <div className="form-group">
               <label htmlFor="CategoryCode">Category Code <span className="required">*</span></label>
               <input
                 id="CategoryCode"
@@ -182,13 +168,28 @@ export default function AddCategory() {
               {codeLoading && <span className="file-meta">Loading code...</span>}
               {errors.CategoryCode && <span className="error-message">{errors.CategoryCode}</span>}
             </div>
+            <div className="form-group">
+              <label htmlFor="CategoryName">Category Name <span className="required">*</span></label>
+              <input
+                id="CategoryName"
+                name="CategoryName"
+                type="text"
+                value={form.CategoryName}
+                onChange={handleChange}
+                placeholder="Enter category name"
+                className={errors.CategoryName ? 'input-error' : ''}
+              />
+              {errors.CategoryName && <span className="error-message">{errors.CategoryName}</span>}
+            </div>
 
-            <div className="form-group full-width">
+
+
+            <div className="form-group">
               <label htmlFor="CategoryDescription">Category Description <span className="required">*</span></label>
-              <textarea
+              <input
                 id="CategoryDescription"
                 name="CategoryDescription"
-                rows="4"
+                type="text"
                 value={form.CategoryDescription}
                 onChange={handleChange}
                 placeholder="Describe this category"
@@ -209,12 +210,12 @@ export default function AddCategory() {
               />
             </div>
 
-            <div className="form-group full-width">
+            <div className="form-group">
               <label htmlFor="MetaDescription">Meta Description</label>
-              <textarea
+              <input
                 id="MetaDescription"
                 name="MetaDescription"
-                rows="3"
+                type="text"
                 value={form.MetaDescription}
                 onChange={handleChange}
                 placeholder="SEO meta description"
