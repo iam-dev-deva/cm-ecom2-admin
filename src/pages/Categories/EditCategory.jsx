@@ -160,12 +160,12 @@ export default function EditCategory() {
 
   return (
     <div className="category-page">
-      <div className="page-header">
+      {/* <div className="page-header">
         <div>
           <h1>Edit Category</h1>
           <p>Update category information and upload new images if needed.</p>
         </div>
-      </div>
+      </div> */}
 
       <div className="category-form-card">
         <form className="category-form" onSubmit={handleSubmit}>
@@ -198,12 +198,12 @@ export default function EditCategory() {
               {errors.CategoryCode && <span className="error-message">{errors.CategoryCode}</span>}
             </div>
 
-            <div className="form-group full-width">
+            <div className="form-group ">
               <label htmlFor="CategoryDescription">Category Description <span className="required">*</span></label>
-              <textarea
+              <input
                 id="CategoryDescription"
                 name="CategoryDescription"
-                rows="4"
+                type="text"
                 value={form.CategoryDescription}
                 onChange={handleChange}
                 placeholder="Describe this category"
@@ -224,12 +224,12 @@ export default function EditCategory() {
               />
             </div>
 
-            <div className="form-group full-width">
+            <div className="form-group">
               <label htmlFor="MetaDescription">Meta Description</label>
-              <textarea
+              <input
                 id="MetaDescription"
                 name="MetaDescription"
-                rows="3"
+                type="text"
                 value={form.MetaDescription}
                 onChange={handleChange}
                 placeholder="SEO meta description"
@@ -242,11 +242,11 @@ export default function EditCategory() {
               {categoryImage ? <span className="file-meta">{categoryImage.name}</span> : category?.CategoryImage ? <span className="file-meta">Current: {category.CategoryImage}</span> : null}
             </div>
 
-            <div className="form-group">
+            {/* <div className="form-group">
               <label htmlFor="IconImage">Icon Image</label>
               <input id="IconImage" name="IconImage" type="file" accept="image/*" onChange={handleFileChange} />
               {iconImage ? <span className="file-meta">{iconImage.name}</span> : category?.IconImage ? <span className="file-meta">Current: {category.IconImage}</span> : null}
-            </div>
+            </div> */}
 
             <div className="switch-group">
               <label>

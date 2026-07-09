@@ -261,12 +261,12 @@ export default function ProductEdit() {
 
   return (
     <div className="product-page">
-      <div className="page-header">
+      {/* <div className="page-header">
         <div>
           <h1>Edit Product</h1>
           <p>Update existing product details.</p>
         </div>
-      </div>
+      </div> */}
 
       <div className="product-form-card">
         <form className="product-form" onSubmit={handleSubmit}>
@@ -331,16 +331,6 @@ export default function ProductEdit() {
               <div className="form-group">
                 <label htmlFor="manufacturer">Manufacturer</label>
                 <input id="manufacturer" name="manufacturer" type="text" value={form.manufacturer} onChange={handleChange} />
-              </div>
-
-              <div className="form-group full-width">
-                <label htmlFor="productDescription">Product Description</label>
-                <textarea id="productDescription" name="productDescription" rows="3" value={form.productDescription} onChange={handleChange} />
-              </div>
-
-              <div className="form-group full-width">
-                <label htmlFor="bulletPoint">Bullet Point</label>
-                <textarea id="bulletPoint" name="bulletPoint" rows="3" value={form.bulletPoint} onChange={handleChange} />
               </div>
 
               <div className="form-group">
@@ -456,6 +446,16 @@ export default function ProductEdit() {
               <div className="form-group">
                 <label htmlFor="packageWeightUnit">Package Weight Unit</label>
                 <input id="packageWeightUnit" name="packageWeightUnit" type="text" value={form.packageWeightUnit} onChange={handleChange} />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="productDescription">Product Description</label>
+                <textarea id="productDescription" name="productDescription" rows="3" value={form.productDescription} onChange={handleChange} />
+              </div>
+
+              <div className="form-group ">
+                <label htmlFor="bulletPoint">Bullet Point</label>
+                <textarea id="bulletPoint" name="bulletPoint" rows="3" value={form.bulletPoint} onChange={handleChange} />
               </div>
             </div>
           )}

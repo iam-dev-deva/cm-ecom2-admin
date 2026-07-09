@@ -142,12 +142,12 @@ export default function AddCategory() {
 
   return (
     <div className="category-page">
-      <div className="page-header">
+      {/* <div className="page-header">
         <div>
           <h1>Add Category</h1>
           <p>Upload category details and images to create a new category.</p>
         </div>
-      </div>
+      </div> */}
 
       <div className="category-form-card">
         <form className="category-form" onSubmit={handleSubmit}>
@@ -229,12 +229,12 @@ export default function AddCategory() {
               {errors.CategoryImage && <span className="error-message">{errors.CategoryImage}</span>}
             </div>
 
-            <div className="form-group">
+            {/* <div className="form-group">
               <label htmlFor="IconImage">Icon Image <span className="required">*</span></label>
               <input id="IconImage" name="IconImage" type="file" accept="image/*" onChange={handleFileChange} className={errors.IconImage ? 'input-error' : ''} />
               {iconImage && <span className="file-meta">{iconImage.name}</span>}
               {errors.IconImage && <span className="error-message">{errors.IconImage}</span>}
-            </div>
+            </div> */}
 
             <div className="switch-group">
               <label>
