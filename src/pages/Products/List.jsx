@@ -1,82 +1,74 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { deleteProductCategory, getProductCategory } from '../../api/productApi'
+import { deleteProduct, getProducts } from '../../api/productApi'
 
 export default function ProductList() {
-  const [categories, setCategories] = useState([])
+  const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState(null)
 
-  async function loadCategories() {
+  async function loadProducts() {
     try {
       setLoading(true)
-      const data = await getProductCategory()
-      setCategories(Array.isArray(data) ? data : [])
+      const response = await getProducts()
+      setProducts(Array.isArray(response?.Data || response) ? (response.Data || response) : [])
     } catch (err) {
-      toast.error(err.message || 'Unable to load categories')
+      toast.error(err.message || 'Unable to load products')
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    loadCategories()
+    loadProducts()
   }, [])
 
-  const handleDelete = async categoryId => {
-    const confirmed = window.confirm('Are you sure you want to delete this category?')
+  const handleDelete = async productCode => {
+    const confirmed = window.confirm('Are you sure you want to delete this product?')
     if (!confirmed) return
 
     try {
-      setDeleting(categoryId)
-      await deleteProductCategory(categoryId)
-      setCategories(prev => prev.filter(item => String(item.CategoryId) !== String(categoryId)))
-      toast.success('Category deleted successfully')
+      setDeleting(productCode)
+      await deleteProduct(productCode)
+      setProducts(prev => prev.filter(item => String(item.ProductCode) !== String(productCode)))
+      toast.success('Product deleted successfully')
     } catch (err) {
-      toast.error(err.message || 'Unable to delete category')
+      toast.error(err.message || 'Unable to delete product')
     } finally {
       setDeleting(null)
     }
   }
 
-  const renderImageCell = image => {
-    if (!image) return '-'
-    if (typeof image === 'string' && image.startsWith('http')) {
-      return <img src={image} alt="category" className="table-image" />
-    }
-    return <span>{image}</span>
-  }
-
   return (
-    <div className="category-page">
+    <div className="product-page">
       <div className="page-header">
         <div>
-          {/* <h1>Categories</h1> */}
-          {/* <p>View and manage category records created through the product API.</p> */}
+          <h1>Products</h1>
+          <p>View and manage your product catalog.</p>
         </div>
-        <Link to="/categories/add" className="btn btn-primary">
-          Add Category
+        <Link to="/products/create" className="btn btn-primary">
+          Add Product
         </Link>
       </div>
 
       <div className="table-card">
         <div className="table-status">
-          {loading ? 'Loading categories...' : `${categories.length} category records found`}
+          {loading ? 'Loading products...' : `${products.length} products found`}
         </div>
 
         <div className="table-wrapper">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Name</th>
                 <th>Code</th>
-                <th>Description</th>
-                <th>Menu Visible</th>
-                <th>Active</th>
-                <th>Category Image</th>
-                <th>Icon Image</th>
-                <th>Created At</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Sale Price</th>
+                <th>SKU</th>
+                <th>Stock</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -87,35 +79,35 @@ export default function ProductList() {
                     Loading...
                   </td>
                 </tr>
-              ) : categories.length === 0 ? (
+              ) : products.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="empty-state">
-                    No categories available.
+                    No products available.
                   </td>
                 </tr>
               ) : (
-                categories.map((category, index) => (
-                  <tr key={`${category.CategoryId || index}-${category.CategoryCode || index}`}>
-                    <td>{category.CategoryName || '-'}</td>
-                    <td>{category.CategoryCode || '-'}</td>
-                    <td>{category.CategoryDescription || '-'}</td>
-                    <td>{category.MenuVisible ? 'Yes' : 'No'}</td>
-                    <td>{category.Active ? 'Yes' : 'No'}</td>
-                    <td>{renderImageCell(category.CategoryImage)}</td>
-                    <td>{renderImageCell(category.IconImage)}</td>
-                    <td>{category.CreatedAt ? new Date(category.CreatedAt).toLocaleString() : '-'}</td>
+                products.map((product, index) => (
+                  <tr key={`${product.ProductID || product.ProductCode || index}`}>
+                    <td>{product.ProductCode != null ? product.ProductCode : '-'}</td>
+                    <td>{product.ItemName || '-'}</td>
+                    <td>{product.ProductCategory || '-'}</td>
+                    <td>{product.BrandName || '-'}</td>
+                    <td>{product.YourPrice != null ? `₹${product.YourPrice}` : '-'}</td>
+                    <td>{product.OfferingSalePrice != null ? `₹${product.OfferingSalePrice}` : '-'}</td>
+                    <td>{product.SKUNo || '-'}</td>
+                    <td>{product.ProductID != null ? product.ProductID : '-'}</td>
                     <td>
                       <div className="action-group">
-                        <Link to={`/categories/edit/${category.CategoryId || index}`} className="btn btn-secondary btn-small">
+                        <Link to={`/products/edit/${product.ProductCode || product.ProductID || index}`} className="btn btn-secondary btn-small">
                           Edit
                         </Link>
                         <button
                           type="button"
                           className="btn btn-danger btn-small"
-                          onClick={() => handleDelete(category.CategoryId)}
-                          disabled={deleting === category.CategoryId}
+                          onClick={() => handleDelete(product.ProductCode || product.ProductID)}
+                          disabled={deleting === product.ProductCode || deleting === product.ProductID}
                         >
-                          {deleting === category.CategoryId ? 'Deleting...' : 'Delete'}
+                          {deleting === product.productCode ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
                     </td>

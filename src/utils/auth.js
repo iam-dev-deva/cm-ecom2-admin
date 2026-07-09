@@ -1,5 +1,5 @@
-import axios from './axios'
-import { decryptToken } from './AuthToken.js'
+import axios from './axiosProduct.js'
+import AuthToken from './AuthToken.js'
 
 const STORAGE_KEY = 'cmAdminUser'
 const LOGIN_URL = 'https://rudra.circlemark.in/AdminServices/api/user/getuserInfo'
@@ -11,12 +11,13 @@ export function saveUser(user) {
 export function getDecryptedStoredToken() {
   const saved = sessionStorage.getItem(STORAGE_KEY)
   const user = saved ? JSON.parse(saved) : null
-  console.log('Retrieved user object (getDecryptedStoredToken):', user)
-  const cipherText = user?.token || user?.JWTToken || ''
+  console.log('user object:', user?.JWTToken)
+  const cipherText = user?.JWTToken || ''
   if (!cipherText) return ''
 
   try {
-    return decryptToken(cipherText)
+    console.info("token:", AuthToken.encryptToken(cipherText))
+    return AuthToken.encryptToken(cipherText)
   } catch (e) {
     console.error('Failed to decrypt stored token:', e)
     return ''

@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { encryptToken, decryptToken } from './AuthToken.js'
+import AuthToken from './AuthToken.js'
 
 const STORAGE_KEY = 'cmAdminUser'
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || '',
+  baseURL: "https://rudra.circlemark.in"+"/ProductServices/api",
   headers: {
     'Content-Type': 'application/json',
   },
@@ -18,26 +18,17 @@ instance.interceptors.request.use(
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY)
       const user = saved ? JSON.parse(saved) : null
-      if (user && user.token) {
+      if (user && (user.token || user.JWTToken)) {
         config.headers = config.headers || {}
 
         // Always log the stored user for diagnosis
         console.log('Saved user object (request):', user)
 
+        const tokenValue = user.token || user.JWTToken
         if (USE_PLAIN_TOKEN) {
-          config.headers.JwtToken = decryptToken(user.JWTToken)
+          config.headers["JwtToken"] = tokenValue
         } else {
-          // config.headers.JwtToken = encryptToken(user.token)
-          config.headers.JwtToken = decryptToken(user.JWTToken)
-
-        }
-
-        // Log raw header value and attempted decryption
-        try {
-          console.log('Raw JwtToken header:', config.headers.JwtToken)
-          console.log('Decrypted JwtToken:', decryptToken(config.headers.JwtToken))
-        } catch (e) {
-          console.error('Decrypt log failed:', e)
+          config.headers["JwtToken"] = AuthToken.encryptToken(tokenValue)
         }
       }
     } catch (e) {

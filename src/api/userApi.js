@@ -1,4 +1,4 @@
-import axios from "../utils/axios.js";
+import axios from "../utils/axiosProduct.js";
 
 const LOGIN_URL = 'https://rudra.circlemark.in/AdminServices/api'
 
