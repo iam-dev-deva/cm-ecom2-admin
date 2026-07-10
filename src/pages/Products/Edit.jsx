@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getProductByCode, getProductCategory, updateProduct } from '../../api/productApi'
+import './Products.css'
 
 const initialForm = {
   categoryId: 0,

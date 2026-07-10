@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { updateProductCategory } from '../../api/productApi'
 import { fetchCategories } from '../../redux/slices/categorySlice'
+import './Categories.css'
 
 const initialForm = {
   CategoryName: '',

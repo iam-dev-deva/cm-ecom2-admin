@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { deleteProductCategory } from '../../api/productApi'
 import { fetchCategories } from '../../redux/slices/categorySlice'
 import Pagination from '../../components/common/Pagination'
+import './Categories.css'
 
 export default function Categories() {
   const dispatch = useDispatch()

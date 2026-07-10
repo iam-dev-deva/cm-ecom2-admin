@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { deleteProduct, getProducts } from '../../api/productApi'
 import Pagination from '../../components/common/Pagination'
+import './Products.css'
 
 export default function ProductList() {
   const [products, setProducts] = useState([])

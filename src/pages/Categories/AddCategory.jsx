@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { addProductCategory, getNextCategoryCode } from '../../api/productApi'
+import './Categories.css'
 
 const initialForm = {
   CategoryName: '',
