@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { updateProductCategory } from '../../api/productApi'
 import { fetchCategories } from '../../redux/slices/categorySlice'
+import ImageUpload from '../../components/common/ImageUpload'
 import './Categories.css'
 
 const initialForm = {
@@ -24,8 +25,10 @@ export default function EditCategory() {
   
   const [category, setCategory] = useState(null)
   const [form, setForm] = useState(initialForm)
-  const [categoryImage, setCategoryImage] = useState(null)
-  const [iconImage, setIconImage] = useState(null)
+  const [images, setImages] = useState({
+    category: null,
+    icon: null
+  })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState({})
@@ -90,14 +93,11 @@ export default function EditCategory() {
     }))
   }
 
-  function handleFileChange(event) {
-    const { name, files } = event.target
-    if (!files || files.length === 0) return
-    if (name === 'CategoryImage') {
-      setCategoryImage(files[0])
-    } else if (name === 'IconImage') {
-      setIconImage(files[0])
-    }
+  const handleImageSelect = (position, file) => {
+    setImages(prev => ({
+      ...prev,
+      [position]: file
+    }))
   }
 
   async function handleSubmit(event) {
@@ -116,8 +116,8 @@ export default function EditCategory() {
       CategoryName: form.CategoryName,
       CategoryCode: form.CategoryCode,
       CategoryDescription: form.CategoryDescription,
-      CategoryImage: categoryImage?.name || category?.CategoryImage || '',
-      IconImage: iconImage?.name || category?.IconImage || '',
+      CategoryImage: images.category?.name || category?.CategoryImage || '',
+      IconImage: images.icon?.name || category?.IconImage || '',
       MetaTitle: form.MetaTitle,
       MetaDescription: form.MetaDescription,
       MenuVisible: form.MenuVisible,
@@ -132,8 +132,8 @@ export default function EditCategory() {
     payload.append('FormData', JSON.stringify(requestData))
 
     // Only append if new file is selected
-    if (categoryImage) {
-      payload.append('file', categoryImage)
+    if (images.category) {
+      payload.append('file', images.category)
     }
 
     try {
@@ -239,14 +239,18 @@ export default function EditCategory() {
 
             <div className="form-group">
               <label htmlFor="CategoryImage">Category Image</label>
-              <input id="CategoryImage" name="CategoryImage" type="file" accept="image/*" onChange={handleFileChange} />
-              {categoryImage ? <span className="file-meta">{categoryImage.name}</span> : category?.CategoryImage ? <span className="file-meta">Current: {category.CategoryImage}</span> : null}
+              <ImageUpload
+                label=""
+                onImageSelect={(file) => handleImageSelect('category', file)}
+              />
             </div>
 
             {/* <div className="form-group">
               <label htmlFor="IconImage">Icon Image</label>
-              <input id="IconImage" name="IconImage" type="file" accept="image/*" onChange={handleFileChange} />
-              {iconImage ? <span className="file-meta">{iconImage.name}</span> : category?.IconImage ? <span className="file-meta">Current: {category.IconImage}</span> : null}
+              <ImageUpload
+                label=""
+                onImageSelect={(file) => handleImageSelect('icon', file)}
+              />
             </div> */}
 
             <div className="switch-group">

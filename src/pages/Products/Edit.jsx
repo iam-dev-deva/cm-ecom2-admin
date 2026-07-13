@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getProductByCode, getProductCategory, updateProduct } from '../../api/productApi'
+import ImageUpload from '../../components/common/ImageUpload'
 import './Products.css'
 
 const initialForm = {
@@ -48,11 +49,12 @@ export default function ProductEdit() {
   const navigate = useNavigate()
   const [form, setForm] = useState(initialForm)
   const [categories, setCategories] = useState([])
-  const [frontImage, setFrontImage] = useState(null)
-  const [backImage, setBackImage] = useState(null)
-  const [rightImage, setRightImage] = useState(null)
-  const [leftImage, setLeftImage] = useState(null)
-  const [previewUrls, setPreviewUrls] = useState({ front: '', back: '', right: '', left: '' })
+  const [images, setImages] = useState({
+    front: null,
+    back: null,
+    right: null,
+    left: null
+  })
   const [activeTab, setActiveTab] = useState('details')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -141,31 +143,12 @@ export default function ProductEdit() {
     }))
   }
 
-  const handleFileChange = event => {
-    const { name, files } = event.target
-    if (!files || files.length === 0) return
-    const file = files[0]
-    if (name === 'frontImage') setFrontImage(file)
-    if (name === 'backImage') setBackImage(file)
-    if (name === 'rightImage') setRightImage(file)
-    if (name === 'leftImage') setLeftImage(file)
+  const handleImageSelect = (position, file) => {
+    setImages(prev => ({
+      ...prev,
+      [position]: file
+    }))
   }
-
-  useEffect(() => {
-    const urls = {
-      front: frontImage ? URL.createObjectURL(frontImage) : '',
-      back: backImage ? URL.createObjectURL(backImage) : '',
-      right: rightImage ? URL.createObjectURL(rightImage) : '',
-      left: leftImage ? URL.createObjectURL(leftImage) : '',
-    }
-    setPreviewUrls(urls)
-
-    return () => {
-      Object.values(urls).forEach(url => {
-        if (url) URL.revokeObjectURL(url)
-      })
-    }
-  }, [frontImage, backImage, rightImage, leftImage])
 
   const handleCategoryChange = event => {
     const selectedCode = event.target.value
@@ -222,20 +205,20 @@ export default function ProductEdit() {
       PackageWeight: Number(form.packageWeight),
       PackageWeightUnit: form.packageWeightUnit,
       Flag: 'U',
-      FrontImage: frontImage?.name || '',
-      BackImage: backImage?.name || '',
-      RightImage: rightImage?.name || '',
-      LeftImage: leftImage?.name || '',
+      FrontImage: images.front?.name || '',
+      BackImage: images.back?.name || '',
+      RightImage: images.right?.name || '',
+      LeftImage: images.left?.name || '',
       BranchId: 5,
       ModifiedOn: new Date().toISOString(),
     }
 
     const payload = new FormData()
     payload.append('FormData', JSON.stringify(requestData))
-    if (frontImage) payload.append('frontImage', frontImage)
-    if (backImage) payload.append('backImage', backImage)
-    if (rightImage) payload.append('rightImage', rightImage)
-    if (leftImage) payload.append('leftImage', leftImage)
+    if (images.front) payload.append('frontImage', images.front)
+    if (images.back) payload.append('backImage', images.back)
+    if (images.right) payload.append('rightImage', images.right)
+    if (images.left) payload.append('leftImage', images.left)
 
     try {
       setSaving(true)
@@ -464,49 +447,22 @@ export default function ProductEdit() {
           {activeTab === 'images' && (
             <>
               <div className="form-grid">
-                <div className="form-group image-upload-group">
-                  <label htmlFor="frontImage">Front Image</label>
-                  <input id="frontImage" name="frontImage" type="file" accept="image/*" onChange={handleFileChange} />
-                  {previewUrls.front && (
-                    <div className="image-preview-card">
-                      <img src={previewUrls.front} alt="Front preview" />
-                      <span className="preview-label">Front image selected</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-group image-upload-group">
-                  <label htmlFor="backImage">Back Image</label>
-                  <input id="backImage" name="backImage" type="file" accept="image/*" onChange={handleFileChange} />
-                  {previewUrls.back && (
-                    <div className="image-preview-card">
-                      <img src={previewUrls.back} alt="Back preview" />
-                      <span className="preview-label">Back image selected</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-group image-upload-group">
-                  <label htmlFor="rightImage">Right Image</label>
-                  <input id="rightImage" name="rightImage" type="file" accept="image/*" onChange={handleFileChange} />
-                  {previewUrls.right && (
-                    <div className="image-preview-card">
-                      <img src={previewUrls.right} alt="Right preview" />
-                      <span className="preview-label">Right image selected</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-group image-upload-group">
-                  <label htmlFor="leftImage">Left Image</label>
-                  <input id="leftImage" name="leftImage" type="file" accept="image/*" onChange={handleFileChange} />
-                  {previewUrls.left && (
-                    <div className="image-preview-card">
-                      <img src={previewUrls.left} alt="Left preview" />
-                      <span className="preview-label">Left image selected</span>
-                    </div>
-                  )}
-                </div>
+                <ImageUpload
+                  label="Front Image"
+                  onImageSelect={(file) => handleImageSelect('front', file)}
+                />
+                <ImageUpload
+                  label="Back Image"
+                  onImageSelect={(file) => handleImageSelect('back', file)}
+                />
+                <ImageUpload
+                  label="Right Image"
+                  onImageSelect={(file) => handleImageSelect('right', file)}
+                />
+                <ImageUpload
+                  label="Left Image"
+                  onImageSelect={(file) => handleImageSelect('left', file)}
+                />
               </div>
 
               <div className="form-actions">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { addProductCategory, getNextCategoryCode } from '../../api/productApi'
+import ImageUpload from '../../components/common/ImageUpload'
 import './Categories.css'
 
 const initialForm = {
@@ -16,8 +17,10 @@ const initialForm = {
 
 export default function AddCategory() {
   const [form, setForm] = useState(initialForm)
-  const [categoryImage, setCategoryImage] = useState(null)
-  const [iconImage, setIconImage] = useState(null)
+  const [images, setImages] = useState({
+    category: null,
+    icon: null
+  })
   const [loading, setLoading] = useState(false)
   const [codeLoading, setCodeLoading] = useState(true)
   const [errors, setErrors] = useState({})
@@ -38,12 +41,8 @@ export default function AddCategory() {
       newErrors.CategoryDescription = 'Category Description is required'
     }
 
-    if (!categoryImage) {
+    if (!images.category) {
       newErrors.CategoryImage = 'Category Image is required'
-    }
-
-    if (!iconImage) {
-      newErrors.IconImage = 'Icon Image is required'
     }
 
     setErrors(newErrors)
@@ -80,15 +79,11 @@ export default function AddCategory() {
     }))
   }
 
-  function handleFileChange(event) {
-    const { name, files } = event.target
-    if (!files || files.length === 0) return
-
-    if (name === 'CategoryImage') {
-      setCategoryImage(files[0])
-    } else if (name === 'IconImage') {
-      setIconImage(files[0])
-    }
+  const handleImageSelect = (position, file) => {
+    setImages(prev => ({
+      ...prev,
+      [position]: file
+    }))
   }
 
   async function handleSubmit(event) {
@@ -107,8 +102,8 @@ export default function AddCategory() {
       CategoryName: form.CategoryName,
       CategoryCode: form.CategoryCode,
       CategoryDescription: form.CategoryDescription,
-      CategoryImage: categoryImage?.name,
-      IconImage: iconImage?.name,
+      CategoryImage: images.category?.name,
+      IconImage: images.icon?.name,
       MetaTitle: form.MetaTitle,
       MetaDescription: form.MetaDescription,
       MenuVisible: form.MenuVisible,
@@ -125,7 +120,7 @@ export default function AddCategory() {
     payload.append("FormData", JSON.stringify(requestData));
 
     // File part
-    payload.append("file", categoryImage);
+    if (images.category) payload.append("file", images.category);
 
     try {
       setLoading(true);
@@ -225,15 +220,19 @@ export default function AddCategory() {
 
             <div className="form-group">
               <label htmlFor="CategoryImage">Category Image <span className="required">*</span></label>
-              <input id="CategoryImage" name="CategoryImage" type="file" accept="image/*" onChange={handleFileChange} className={errors.CategoryImage ? 'input-error' : ''} />
-              {categoryImage && <span className="file-meta">{categoryImage.name}</span>}
+              <ImageUpload
+                label=""
+                onImageSelect={(file) => handleImageSelect('category', file)}
+              />
               {errors.CategoryImage && <span className="error-message">{errors.CategoryImage}</span>}
             </div>
 
             {/* <div className="form-group">
               <label htmlFor="IconImage">Icon Image <span className="required">*</span></label>
-              <input id="IconImage" name="IconImage" type="file" accept="image/*" onChange={handleFileChange} className={errors.IconImage ? 'input-error' : ''} />
-              {iconImage && <span className="file-meta">{iconImage.name}</span>}
+              <ImageUpload
+                label=""
+                onImageSelect={(file) => handleImageSelect('icon', file)}
+              />
               {errors.IconImage && <span className="error-message">{errors.IconImage}</span>}
             </div> */}
 

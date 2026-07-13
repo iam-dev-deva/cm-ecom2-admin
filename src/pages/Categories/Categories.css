@@ -18,6 +18,18 @@
   gap: 18px;
 }
 
+.category-form .form-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 768px) {
+  .category-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .table-image {
   width: 60px;
   height: 40px;

@@ -85,7 +85,7 @@ a {
 }
 
 .sidebar-header {
-  margin-bottom: 24px;
+  margin-bottom: 0px;
 }
 
 .sidebar-title {
@@ -121,6 +121,9 @@ a {
   font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
+}
+.sidebar-logo{
+  max-width: 75px;
 }
 
 /* .parent-toggle:hover {
