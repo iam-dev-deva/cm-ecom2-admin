@@ -204,7 +204,7 @@ export default function ProductEdit() {
       PackageUnit: form.packageUnit,
       PackageWeight: Number(form.packageWeight),
       PackageWeightUnit: form.packageWeightUnit,
-      Flag: 'U',
+      Flag: 'update',
       FrontImage: images.front?.name || '',
       BackImage: images.back?.name || '',
       RightImage: images.right?.name || '',
@@ -431,7 +431,7 @@ export default function ProductEdit() {
                 <label htmlFor="packageWeightUnit">Package Weight Unit</label>
                 <input id="packageWeightUnit" name="packageWeightUnit" type="text" value={form.packageWeightUnit} onChange={handleChange} />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="productDescription">Product Description</label>
                 <textarea id="productDescription" name="productDescription" rows="3" value={form.productDescription} onChange={handleChange} />
@@ -449,18 +449,38 @@ export default function ProductEdit() {
               <div className="form-grid">
                 <ImageUpload
                   label="Front Image"
+                  initialImage={
+                    item?.FrontImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.FrontImage}`
+                      : null
+                  }
                   onImageSelect={(file) => handleImageSelect('front', file)}
                 />
                 <ImageUpload
                   label="Back Image"
+                  initialImage={
+                    item?.BackImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.BackImage}`
+                      : null
+                  }
                   onImageSelect={(file) => handleImageSelect('back', file)}
                 />
                 <ImageUpload
                   label="Right Image"
+                  initialImage={
+                    item?.RightImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.RightImage}`
+                      : null
+                  }
                   onImageSelect={(file) => handleImageSelect('right', file)}
                 />
                 <ImageUpload
                   label="Left Image"
+                  initialImage={
+                    item?.LeftImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.LeftImage}`
+                      : null
+                  }
                   onImageSelect={(file) => handleImageSelect('left', file)}
                 />
               </div>

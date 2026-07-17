@@ -22,7 +22,7 @@ export default function EditCategory() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { categories, loading: categoriesLoading } = useSelector(state => state.category)
-  
+
   const [category, setCategory] = useState(null)
   const [form, setForm] = useState(initialForm)
   const [images, setImages] = useState({
@@ -109,7 +109,7 @@ export default function EditCategory() {
     }
 
     const requestData = {
-      Flag: 'U',
+      Flag: 'update',
       CategoryId: category?.CategoryId || id,
       CompId: 1,
       BranchId: 5,
@@ -241,6 +241,11 @@ export default function EditCategory() {
               <label htmlFor="CategoryImage">Category Image</label>
               <ImageUpload
                 label=""
+                initialImage={
+                  category?.CategoryImage
+                    ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/${category.CategoryImage}`
+                    : null
+                }
                 onImageSelect={(file) => handleImageSelect('category', file)}
               />
             </div>

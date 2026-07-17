@@ -41,7 +41,7 @@ const initialForm = {
   packageUnit: 'cm',
   packageWeight: '',
   packageWeightUnit: 'kg',
-  flag: 'I',
+  flag: 'add',
 }
 
 export default function ProductCreate() {

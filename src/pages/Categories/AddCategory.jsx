@@ -95,7 +95,7 @@ export default function AddCategory() {
     }
 
     const requestData = {
-      Flag: "I",
+      Flag: "add",
       CategoryId: 0,
       CompId: 1,
       BranchId: 5,
