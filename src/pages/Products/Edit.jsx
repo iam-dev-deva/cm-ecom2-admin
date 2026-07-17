@@ -450,8 +450,8 @@ export default function ProductEdit() {
                 <ImageUpload
                   label="Front Image"
                   initialImage={
-                    item?.FrontImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.FrontImage}`
+                    form?.FrontImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.FrontImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('front', file)}
@@ -459,8 +459,8 @@ export default function ProductEdit() {
                 <ImageUpload
                   label="Back Image"
                   initialImage={
-                    item?.BackImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.BackImage}`
+                    form?.BackImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.BackImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('back', file)}
@@ -468,8 +468,8 @@ export default function ProductEdit() {
                 <ImageUpload
                   label="Right Image"
                   initialImage={
-                    item?.RightImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.RightImage}`
+                    form?.RightImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.RightImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('right', file)}
@@ -477,8 +477,8 @@ export default function ProductEdit() {
                 <ImageUpload
                   label="Left Image"
                   initialImage={
-                    item?.LeftImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${item.LeftImage}`
+                    form?.LeftImage
+                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.LeftImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('left', file)}

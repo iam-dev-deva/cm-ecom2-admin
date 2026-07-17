@@ -161,7 +161,7 @@ export default function ProductCreate() {
       PackageUnit: form.packageUnit,
       PackageWeight: Number(form.packageWeight),
       PackageWeightUnit: form.packageWeightUnit,
-      Flag: 'I',
+      Flag: 'add',
       FrontImage: images.front?.name || '',
       BackImage: images.back?.name || '',
       RightImage: images.right?.name || '',
@@ -210,7 +210,18 @@ export default function ProductCreate() {
             </button>
           </div>
 
-          {activeTab === 'details' && (
+          <div style={{ display: activeTab === 'details' ? 'block' : 'none' }}>
+            {(images.front || images.back || images.right || images.left) && (
+              <div className="images-selected-summary">
+                <p className="summary-title">Selected Images:</p>
+                <div className="summary-items">
+                  {images.front && <span className="summary-item">✓ Front</span>}
+                  {images.back && <span className="summary-item">✓ Back</span>}
+                  {images.right && <span className="summary-item">✓ Right</span>}
+                  {images.left && <span className="summary-item">✓ Left</span>}
+                </div>
+              </div>
+            )}
             <div className="form-grid">
               <div className="form-group">
                 <label htmlFor="productCode">Product Code</label>
@@ -416,28 +427,26 @@ export default function ProductCreate() {
                 <textarea id="bulletPoint" name="bulletPoint" rows="3" value={form.bulletPoint} onChange={handleChange} />
               </div>
             </div>
-          )}
+          </div>
 
-          {activeTab === 'images' && (
-            <div className="form-grid">
-              <ImageUpload
-                label="Front Image"
-                onImageSelect={(file) => handleImageSelect('front', file)}
-              />
-              <ImageUpload
-                label="Back Image"
-                onImageSelect={(file) => handleImageSelect('back', file)}
-              />
-              <ImageUpload
-                label="Right Image"
-                onImageSelect={(file) => handleImageSelect('right', file)}
-              />
-              <ImageUpload
-                label="Left Image"
-                onImageSelect={(file) => handleImageSelect('left', file)}
-              />
-            </div>
-          )}
+          <div className={`form-grid ${activeTab === 'images' ? 'visible' : 'hidden'}`} style={{ display: activeTab === 'images' ? 'grid' : 'none' }}>
+            <ImageUpload
+              label="Front Image"
+              onImageSelect={(file) => handleImageSelect('front', file)}
+            />
+            <ImageUpload
+              label="Back Image"
+              onImageSelect={(file) => handleImageSelect('back', file)}
+            />
+            <ImageUpload
+              label="Right Image"
+              onImageSelect={(file) => handleImageSelect('right', file)}
+            />
+            <ImageUpload
+              label="Left Image"
+              onImageSelect={(file) => handleImageSelect('left', file)}
+            />
+          </div>
 
           <div className="form-actions">
             <button type="button" className="btn btn-secondary" onClick={() => navigate('/products')}>
