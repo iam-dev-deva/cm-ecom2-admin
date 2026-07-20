@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { PiArrowBendDownRightFill } from 'react-icons/pi';
 import { NavLink } from 'react-router-dom'
-import Logo_img from '../../assets/Logo.png'
 
 export default function Sidebar({ isOpen, onClose }) {
   const [mainOpen, setMainOpen] = useState(false)
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
-        <span className="sidebar-title"><img className="sidebar-logo" src={Logo_img} alt="Logo" /></span>
+        <span className="sidebar-title"></span>
         <button className="close-sidebar" onClick={() => onClose && onClose()} aria-label="Close sidebar">×</button>
       </div>
       <nav className="sidebar-links">

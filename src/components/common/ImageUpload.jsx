@@ -1,7 +1,58 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import './ImageUpload.css';
+
+// Compresses a canvas's content into a JPEG blob under `maxSizeKB`.
+// Strategy: first try lowering quality; if that's not enough at low quality,
+// scale down the canvas dimensions and try again. Stops as soon as the
+// target size is hit, so it won't over-compress small images.
+async function compressCanvasToBlob(sourceCanvas, maxSizeKB = 100) {
+  const canvasToBlob = (canvas, quality) =>
+    new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+
+  let width = sourceCanvas.width;
+  let height = sourceCanvas.height;
+  let workingCanvas = sourceCanvas;
+
+  const maxSizeBytes = maxSizeKB * 1024;
+  const minQuality = 0.3;
+  const minDimension = 200; // don't shrink below this on the longer side
+
+  for (let attempt = 0; attempt < 8; attempt++) {
+    let quality = 0.9;
+    let blob = await canvasToBlob(workingCanvas, quality);
+
+    // Step quality down in increments until under the limit or floor reached
+    while (blob.size > maxSizeBytes && quality > minQuality) {
+      quality -= 0.1;
+      blob = await canvasToBlob(workingCanvas, quality);
+    }
+
+    if (blob.size <= maxSizeBytes) {
+      return blob;
+    }
+
+    // Still too big even at min quality -> shrink dimensions and retry
+    if (Math.max(width, height) <= minDimension) {
+      // Can't shrink further, return best effort (lowest quality achieved)
+      return blob;
+    }
+
+    width = Math.round(width * 0.85);
+    height = Math.round(height * 0.85);
+
+    const resizedCanvas = document.createElement('canvas');
+    resizedCanvas.width = width;
+    resizedCanvas.height = height;
+    const ctx = resizedCanvas.getContext('2d');
+    ctx.drawImage(workingCanvas, 0, 0, width, height);
+    workingCanvas = resizedCanvas;
+  }
+
+  // Fallback: return whatever the last attempt produced
+  return canvasToBlob(workingCanvas, minQuality);
+}
 
 export default function ImageUpload({ label, onImageSelect, initialImage = null }) {
   const [preview, setPreview] = useState(initialImage || null);
@@ -9,8 +60,15 @@ export default function ImageUpload({ label, onImageSelect, initialImage = null 
   const [cropImage, setCropImage] = useState(null);
   const [crop, setCrop] = useState({ unit: '%', width: 50, aspect: 1 });
   const [completedCrop, setCompletedCrop] = useState(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const imgRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Keep preview in sync if initialImage arrives/changes after mount
+  // (e.g. category/product data loads asynchronously on an edit screen).
+  useEffect(() => {
+    setPreview(initialImage || null);
+  }, [initialImage]);
 
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
@@ -50,7 +108,10 @@ export default function ImageUpload({ label, onImageSelect, initialImage = null 
       completedCrop.height
     );
 
-    canvas.toBlob((blob) => {
+    setIsCompressing(true);
+    try {
+      const blob = await compressCanvasToBlob(canvas, 100); // target: under 100KB
+
       const croppedFile = new File(
         [blob],
         `cropped_${Date.now()}.jpg`,
@@ -63,7 +124,9 @@ export default function ImageUpload({ label, onImageSelect, initialImage = null 
       setShowCrop(false);
       setCropImage(null);
       fileInputRef.current.value = '';
-    }, 'image/jpeg');
+    } finally {
+      setIsCompressing(false);
+    }
   };
 
   const handleRemoveImage = (e) => {
@@ -160,6 +223,7 @@ export default function ImageUpload({ label, onImageSelect, initialImage = null 
                 type="button"
                 className="btn btn-secondary"
                 onClick={() => setShowCrop(false)}
+                disabled={isCompressing}
               >
                 Cancel
               </button>
@@ -167,8 +231,9 @@ export default function ImageUpload({ label, onImageSelect, initialImage = null 
                 type="button"
                 className="btn btn-primary"
                 onClick={handleCropConfirm}
+                disabled={isCompressing}
               >
-                Confirm Crop
+                {isCompressing ? 'Compressing...' : 'Confirm Crop'}
               </button>
             </div>
           </div>

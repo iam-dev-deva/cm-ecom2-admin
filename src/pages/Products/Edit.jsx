@@ -41,7 +41,7 @@ const initialForm = {
   packageUnit: 'cm',
   packageWeight: '',
   packageWeightUnit: 'kg',
-  flag: 'U',
+  flag: 'update',
 }
 
 export default function ProductEdit() {
@@ -110,7 +110,11 @@ export default function ProductEdit() {
           packageUnit: productRecord.PackageUnit || 'cm',
           packageWeight: productRecord.PackageWeight || '',
           packageWeightUnit: productRecord.PackageWeightUnit || 'kg',
-          flag: 'U',
+          flag: 'update',
+          FrontImage: productRecord.FrontImage || '',
+          BackImage: productRecord.BackImage || '',
+          RightImage: productRecord.RightImage || '',
+          LeftImage: productRecord.LeftImage || '',
         })
       } catch (err) {
         toast.error(err.message || 'Unable to load product')
@@ -231,6 +235,7 @@ export default function ProductEdit() {
       setSaving(false)
     }
   }
+console.log(form);
 
   if (loading) {
     return (
@@ -436,7 +441,7 @@ export default function ProductEdit() {
                 <label htmlFor="productDescription">Product Description</label>
                 <textarea id="productDescription" name="productDescription" rows="3" value={form.productDescription} onChange={handleChange} />
               </div>
-
+                    
               <div className="form-group ">
                 <label htmlFor="bulletPoint">Bullet Point</label>
                 <textarea id="bulletPoint" name="bulletPoint" rows="3" value={form.bulletPoint} onChange={handleChange} />
@@ -451,7 +456,7 @@ export default function ProductEdit() {
                   label="Front Image"
                   initialImage={
                     form?.FrontImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.FrontImage}`
+                      ? `https://rudra.circlemark.in/FTPServices/ProductFiles/${form.FrontImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('front', file)}
@@ -460,7 +465,7 @@ export default function ProductEdit() {
                   label="Back Image"
                   initialImage={
                     form?.BackImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.BackImage}`
+                      ? `https://rudra.circlemark.in/FTPServices/ProductFiles/${form.BackImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('back', file)}
@@ -469,7 +474,7 @@ export default function ProductEdit() {
                   label="Right Image"
                   initialImage={
                     form?.RightImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.RightImage}`
+                      ? `https://rudra.circlemark.in/FTPServices/ProductFiles/${form.RightImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('right', file)}
@@ -478,7 +483,7 @@ export default function ProductEdit() {
                   label="Left Image"
                   initialImage={
                     form?.LeftImage
-                      ? `https://rudra.circlemark.in/FTPServices/CatergoryFiles/ProductFiles${form.LeftImage}`
+                      ? `https://rudra.circlemark.in/FTPServices/ProductFiles/${form.LeftImage}`
                       : null
                   }
                   onImageSelect={(file) => handleImageSelect('left', file)}

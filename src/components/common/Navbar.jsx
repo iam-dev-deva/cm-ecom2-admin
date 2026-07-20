@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import { getStoredUser, logout } from '../../utils/auth';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
+import Logo_img from '../../assets/Logo.png'
 
 
 
@@ -44,12 +45,13 @@ export default function Navbar({ onToggleSidebar }) {
         <button className="hamburger" aria-label="Toggle sidebar" onClick={() => onToggleSidebar && onToggleSidebar()}>
           <FaBars />
         </button>
-
+<img className="sidebar-logo" src={Logo_img} alt="Logo" />
         <div className="navbar-brand">
-          <span className="navbar-title">ARUDRA Admin</span>
+          
+          <span className="navbar-title"></span>
           {user?.UserName && (
             <span className="navbar-user">
-              Welcome to ARUDRA Admin Panel
+              {/* Welcome to ARUDRA Admin Panel */}
             </span>
           )}
         </div>
