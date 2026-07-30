@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { FaCube } from 'react-icons/fa';
+import { MdDashboard } from 'react-icons/md';
 import { PiArrowBendDownRightFill } from 'react-icons/pi';
 import { NavLink } from 'react-router-dom'
 
@@ -12,7 +14,7 @@ export default function Sidebar({ isOpen, onClose }) {
       </div>
       <nav className="sidebar-links">
         <NavLink to="/dashboard" onClick={() => onClose && onClose()} className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}>
-          Dashboard
+         <MdDashboard />  Dashboard
         </NavLink>
         <div className="sidebar-link sidebar-parent">
           <div
@@ -21,7 +23,7 @@ export default function Sidebar({ isOpen, onClose }) {
             onClick={() => setMainOpen((s) => !s)}
             aria-expanded={mainOpen}
           >
-            <span>Master</span>
+            <span><FaCube />  Master</span>
           </div>
           <div className={`submenu ${mainOpen ? 'open' : ''}`}>
             <NavLink to="/products" onClick={() => { setMainOpen(false); onClose && onClose() }} className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}>
@@ -32,9 +34,9 @@ export default function Sidebar({ isOpen, onClose }) {
             </NavLink>
           </div>
         </div>
-        <NavLink to="/orders" onClick={() => onClose && onClose()} className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}>
+        {/* <NavLink to="/orders" onClick={() => onClose && onClose()} className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}>
           Orders
-        </NavLink>
+        </NavLink> */}
         {/* <NavLink to="/customers" onClick={() => onClose && onClose()} className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}>
           Customers
         </NavLink>
