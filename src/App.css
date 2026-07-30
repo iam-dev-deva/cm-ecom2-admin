@@ -398,10 +398,38 @@ a {
   margin-top: 20px;
 }
 
-.table-status {
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.table-status {
   color: #4b5563;
   font-size: 14px;
+}
+
+.table-search {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  min-width: 220px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  color: #111827;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .table-wrapper {
@@ -426,6 +454,24 @@ a {
   font-size: 14px;
   font-weight: 700;
   background: #f9fafb;
+}
+
+.sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sort-icon {
+  color: #6b7280;
+  font-size: 12px;
 }
 
 .data-table tbody tr:nth-child(odd) {

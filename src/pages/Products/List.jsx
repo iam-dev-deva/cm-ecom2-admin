@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { deleteProduct, getProducts } from '../../api/productApi'
-import Pagination from '../../components/common/Pagination'
+import DataTable from '../../components/common/DataTable'
 import './Products.css'
 
 export default function ProductList() {
@@ -44,24 +44,16 @@ export default function ProductList() {
     }
   }
 
-  const pageCount = Math.max(1, Math.ceil(products.length / pageSize))
-  const currentProducts = products.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-
-  const handlePageChange = page => {
-    if (page < 1 || page > pageCount) return
-    setCurrentPage(page)
-  }
-
-  const handlePageSizeChange = event => {
-    setPageSize(Number(event.target.value))
-    setCurrentPage(1)
-  }
-
-  useEffect(() => {
-    if (currentPage > pageCount) {
-      setCurrentPage(pageCount)
-    }
-  }, [currentPage, pageCount])
+  const columns = [
+    { key: 'ProductCode', label: 'Code', sortable: true, accessor: product => (product.ProductCode != null ? product.ProductCode : '-') },
+    { key: 'ItemName', label: 'Item Name', sortable: true, accessor: product => product.ItemName || '-' },
+    { key: 'ProductCategory', label: 'Category', sortable: true, accessor: product => product.ProductCategory || '-' },
+    { key: 'BrandName', label: 'Brand', sortable: true, accessor: product => product.BrandName || '-' },
+    { key: 'YourPrice', label: 'Price', sortable: true, accessor: product => (product.YourPrice != null ? `₹${product.YourPrice}` : '-') },
+    { key: 'OfferingSalePrice', label: 'Sale Price', sortable: true, accessor: product => (product.OfferingSalePrice != null ? `₹${product.OfferingSalePrice}` : '-') },
+    { key: 'SKUNo', label: 'SKU', sortable: true, accessor: product => product.SKUNo || '-' },
+    { key: 'ProductID', label: 'Stock', sortable: true, accessor: product => (product.ProductID != null ? product.ProductID : '-') },
+  ]
 
   return (
     <div className="product-page">
@@ -75,80 +67,28 @@ export default function ProductList() {
         </Link>
       </div>
 
-      <div className="table-card">
-        <div className="table-status">
-          {loading ? 'Loading products...' : `${products.length} products found`}
-        </div>
-
-        <div className="table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Item Name</th>
-                <th>Category</th>
-                <th>Brand</th>
-                <th>Price</th>
-                <th>Sale Price</th>
-                <th>SKU</th>
-                <th>Stock</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="9" className="empty-state">
-                    Loading...
-                  </td>
-                </tr>
-              ) : products.length === 0 ? (
-                <tr>
-                  <td colSpan="9" className="empty-state">
-                    No products available.
-                  </td>
-                </tr>
-              ) : (
-                currentProducts.map((product, index) => (
-                  <tr key={`${product.ProductID || product.ProductCode || index}`}>
-                    <td>{product.ProductCode != null ? product.ProductCode : '-'}</td>
-                    <td>{product.ItemName || '-'}</td>
-                    <td>{product.ProductCategory || '-'}</td>
-                    <td>{product.BrandName || '-'}</td>
-                    <td>{product.YourPrice != null ? `₹${product.YourPrice}` : '-'}</td>
-                    <td>{product.OfferingSalePrice != null ? `₹${product.OfferingSalePrice}` : '-'}</td>
-                    <td>{product.SKUNo || '-'}</td>
-                    <td>{product.ProductID != null ? product.ProductID : '-'}</td>
-                    <td>
-                      <div className="action-group">
-                        <Link to={`/products/edit/${product.ProductCode || product.ProductID || index}`} className="btn btn-secondary btn-small">
-                          Edit
-                        </Link>
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-small"
-                          onClick={() => handleDelete(product.ProductCode || product.ProductID)}
-                          disabled={deleting === product.ProductCode || deleting === product.ProductID}
-                        >
-                          {deleting === product.productCode ? 'Deleting...' : 'Delete'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <Pagination
-          totalItems={products.length}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
-      </div>
+      <DataTable
+        data={products}
+        columns={columns}
+        loading={loading}
+        emptyMessage="No products available."
+        searchPlaceholder="Search products..."
+        renderActions={product => (
+          <div className="action-group">
+            <Link to={`/products/edit/${product.ProductCode || product.ProductID}`} className="btn btn-secondary btn-small">
+              Edit
+            </Link>
+            <button
+              type="button"
+              className="btn btn-danger btn-small"
+              onClick={() => handleDelete(product.ProductCode || product.ProductID)}
+              disabled={deleting === product.ProductCode || deleting === product.ProductID}
+            >
+              {deleting === product.ProductCode || deleting === product.ProductID ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
+        )}
+      />
     </div>
   )
 }
